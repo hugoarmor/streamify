@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export STREAMIFY_MANAGED_FOLDER="/Users/hugomoreira/coding/streamify/server/static"
+export STREAMIFY_MANAGED_FOLDER="<absolute_path_to_folder>"
 
 exec mix
 
