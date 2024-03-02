@@ -23,6 +23,6 @@ defmodule FilesService do
   end
 
   def get_managed_folder do
-    System.get_env("STREAMIFY_MANAGED_FOLDER")
+    System.get_env("STREAMIFY_MANAGED_FOLDER") || ""
   end
 end
