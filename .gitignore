@@ -26,3 +26,5 @@ streamify-*.tar
 /tmp/
 
 .DS_Store
+*_router.ex
+
