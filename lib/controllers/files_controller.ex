@@ -5,12 +5,6 @@ defmodule FilesController do
   plug(:match)
   plug(:dispatch)
 
-  get "/" do
-    conn
-    |> put_resp_header("content-type", "text/html")
-    |> send_file(200, "public/index.html")
-  end
-
   get "/:file_path" do
     file_path = "#{FilesService.get_managed_folder()}/#{file_path}"
 
