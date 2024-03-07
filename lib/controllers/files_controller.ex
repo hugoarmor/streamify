@@ -8,12 +8,10 @@ defmodule FilesController do
   get "/:file_path" do
     file_path = "#{FilesService.get_managed_folder()}/#{file_path}"
 
-    from = self()
+    result = FilesService.get_file_stream(file_path)
 
-    to = spawn(fn -> FilesService.get_file_stream({from, self()}, file_path) end)
-
-    receive do
-      {^to, {:ok, stream, stats}} ->
+    case result do
+      {:ok, stream, stats} ->
         conn =
           conn
           |> put_resp_header("content-disposition", "attachment; filename=\"#{stats.file_name}\"")
@@ -26,11 +24,10 @@ defmodule FilesController do
 
         external_ip = conn.remote_ip |> Tuple.to_list() |> Enum.join(".")
 
-        IO.puts "[INFO] File #{file_path} streamed successfully to #{external_ip}"
+        IO.puts("[INFO] File #{file_path} streamed successfully to #{external_ip}")
 
         conn
-
-      {^to, {:error, message}} ->
+      {:error, message} ->
         conn |> send_resp(400, message)
     end
   end
