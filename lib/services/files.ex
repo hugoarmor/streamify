@@ -23,6 +23,15 @@ defmodule FilesService do
   end
 
   def get_managed_folder do
-    System.get_env("STREAMIFY_MANAGED_FOLDER") || ""
+    path = Path.expand("~/Streamify")
+
+    {status, _stat} = File.stat(path)
+
+    if status == :error do
+      File.mkdir_p!(path)
+      IO.puts "Created managed folder #{path}"
+    end
+
+    path
   end
 end

@@ -5,12 +5,6 @@ defmodule Streamify do
     IO.puts "Starting Streamify..."
 
     managed_folder = FilesService.get_managed_folder();
-    {status, _} = managed_folder |> File.stat();
-
-    if status == :error do
-      IO.puts "Error: Managed folder #{managed_folder} does not exist or is not accessible."
-      System.halt(1)
-    end
 
     children = [
       {Bandit, plug: Router, scheme: :http, port: 4000}
