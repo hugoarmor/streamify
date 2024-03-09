@@ -1,6 +1,7 @@
 defmodule Router do
   use Plug.Router
 
+  plug Api.CORS
   plug(:match)
   plug(:dispatch)
 
