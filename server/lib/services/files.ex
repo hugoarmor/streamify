@@ -23,4 +23,17 @@ defmodule FilesService do
 
     path
   end
+
+  def get_folder_files!(path) do
+    File.ls!(path)
+    |> Enum.into(%{}, fn file ->
+      file_path = Path.join(path, file)
+      stats = File.stat!(file_path)
+
+      {file, %{
+        size: stats.size,
+        type: stats.type,
+      }}
+    end)
+  end
 end

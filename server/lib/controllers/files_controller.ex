@@ -31,4 +31,10 @@ defmodule FilesController do
         conn |> send_resp(400, message)
     end
   end
+
+  get "/" do
+    result = FilesService.get_managed_folder() |> FilesService.get_folder_files!() |> Jason.encode!(pretty: true)
+
+    conn |> send_resp(200, result)
+  end
 end
