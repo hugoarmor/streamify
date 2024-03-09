@@ -4,11 +4,11 @@ defmodule Router do
   plug(:match)
   plug(:dispatch)
 
-  get "/" do
+  forward("/api/files", to: FilesController)
+
+  match _ do
     conn
     |> put_resp_header("content-type", "text/html")
     |> send_file(200, "static/index.html")
   end
-
-  forward("/files", to: FilesController)
 end
