@@ -1,11 +1,33 @@
-import { FileIcon } from "../../../assets/file-icon.svg";
-import { FolderIcon } from "../../../assets/folder-icon.svg";
-import { MoreIcon } from "../../../assets/more-icon.svg";
+import { useEffect, useState } from "react";
 import { PlusIcon } from "../../../assets/plus-icon.svg";
 import { SearchIcon } from "../../../assets/search-icon.svg";
+import { FilesTable } from "./components/table";
+import { Http } from "../../../services/http/http.service";
 
+export type StreamifyFile = {
+  size: number;
+  type: string;
+  last_modified: number;
+};
+
+export type StreamifyFiles = {
+  [key: string]: StreamifyFile;
+};
 
 export function FilesLayout() {
+  const [files, setFiles] = useState<StreamifyFiles>({});
+
+  useEffect(() => {
+    (async () => {
+      const http = new Http();
+      const response = await http.get<StreamifyFiles>("api/files");
+
+      if (response.error) return console.error(response.error.message);
+
+      setFiles(response.data);
+    })();
+  }, []);
+
   return (
     <section className="w-full h-full px-20 flex items-center justify-center">
       <section className="flex py-10 w-full h-full flex-col">
@@ -23,57 +45,7 @@ export function FilesLayout() {
           </button>
         </div>
         <div className="h-full pt-10 px-14 justify-center bg-stf-purple-800 border border-stf-purple-600 rounded-xl">
-          <table className="w-full table-fixed">
-            <thead>
-              <tr>
-                <th className="w-1/2 pb-5 text-left">File Name</th>
-                <th className="w-1/4 pb-5">Last Modified</th>
-                <th className="w-1/8 pb-5">Size</th>
-                <th className="w-1/8 pb-5"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-t border-stf-purple-600">
-                <td className="py-3 flex items-center gap-2">
-                  <div className="w-10 flex items-center justify-center">
-                    <FileIcon />
-                  </div>
-                  BigNameOfABigFile.xlsx
-                </td>
-                <td className="text-center font-thin">10/10/2021 09:30 am</td>
-                <td className="text-center font-thin">10 MB</td>
-                <td className="flex items-center justify-center">
-                  <MoreIcon />
-                </td>
-              </tr>
-              <tr className="border-t border-stf-purple-600">
-                <td className="py-3 flex items-center gap-2">
-                  <div className="w-10 flex items-center justify-center">
-                    <FolderIcon />
-                  </div>
-                  BigNameOfABigFolder
-                </td>
-                <td className="text-center font-thin">10/10/2021 09:30 am</td>
-                <td className="text-center font-thin">10 MB</td>
-                <td className="flex items-center justify-center">
-                  <MoreIcon />
-                </td>
-              </tr>
-              <tr className="border-t border-stf-purple-600">
-                <td className="py-3 flex items-center gap-2">
-                  <div className="w-10 flex items-center justify-center">
-                    <FileIcon />
-                  </div>
-                  BigNameOfABigFile.xlsx
-                </td>
-                <td className="text-center font-thin">10/10/2021 09:30 am</td>
-                <td className="text-center font-thin">10 MB</td>
-                <td className="flex items-center justify-center">
-                  <MoreIcon />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <FilesTable files={files} />
         </div>
       </section>
     </section>

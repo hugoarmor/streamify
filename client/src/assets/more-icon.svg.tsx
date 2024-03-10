@@ -1,6 +1,11 @@
-export function MoreIcon() {
+export type Props = {
+  className?: string;
+};
+
+export function MoreIcon({ className }: Props) {
   return (
     <svg
+      className={className}
       width="25"
       height="25"
       viewBox="0 0 25 25"

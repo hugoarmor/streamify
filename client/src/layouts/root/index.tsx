@@ -1,32 +1,9 @@
-import { useEffect, useState } from "react";
-import { Http } from "../../services/http/http.service";
 import { StreamifyLogo } from "../../assets/streamify-logo.svg";
 import { UserIcon } from "../../assets/user-icon.svg";
 import { Sidebar } from "../../components/sidebar";
 import { Outlet } from "react-router-dom";
 
-type StreamifyFile = {
-  size: number;
-  type: string;
-};
-
-type StreamifyFiles = {
-  [key: string]: StreamifyFile;
-};
-
 function RootLayout() {
-  const [files, setFiles] = useState<StreamifyFiles>({});
-
-  useEffect(() => {
-    (async () => {
-      const http = new Http();
-      const response = await http.get<StreamifyFiles>("api/files");
-
-      if (response.error) return console.error(response.error.message);
-
-      setFiles(response.data);
-    })();
-  }, []);
 
   return (
     <main className="bg-gradient-purple flex flex-col w-full h-svh">
