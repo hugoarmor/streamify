@@ -1,12 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
-import App from "./App";
+import RootLayout from "./layouts/root";
+import { FilesLayout } from "./layouts/root/files";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <RootLayout />,
     children: [
-      { path: "/", element: <h1>Files</h1> },
+      { path: "/", element: <FilesLayout />},
       { path: "cluster", element: <h1>Cluster</h1> },
       { path: "settings", element: <h1>Settings</h1> },
     ]

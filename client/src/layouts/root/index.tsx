@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Http } from "./services/http/http.service";
-import { StreamifyLogo } from "./assets/streamify-logo.svg";
-import { UserIcon } from "./assets/user-icon.svg";
+import { Http } from "../../services/http/http.service";
+import { StreamifyLogo } from "../../assets/streamify-logo.svg";
+import { UserIcon } from "../../assets/user-icon.svg";
+import { Sidebar } from "../../components/sidebar";
 import { Outlet } from "react-router-dom";
-import { Sidebar } from "./components/sidebar";
 
 type StreamifyFile = {
   size: number;
@@ -14,7 +14,7 @@ type StreamifyFiles = {
   [key: string]: StreamifyFile;
 };
 
-function App() {
+function RootLayout() {
   const [files, setFiles] = useState<StreamifyFiles>({});
 
   useEffect(() => {
@@ -46,4 +46,4 @@ function App() {
   );
 }
 
-export default App;
+export default RootLayout;
