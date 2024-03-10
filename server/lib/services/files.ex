@@ -28,12 +28,14 @@ defmodule FilesService do
     File.ls!(path)
     |> Enum.into(%{}, fn file ->
       file_path = Path.join(path, file)
-      stats = File.stat!(file_path)
+      stats = File.stat!(file_path, [{:time, :posix}])
 
-      {file, %{
-        size: stats.size,
-        type: stats.type,
-      }}
+      {file,
+       %{
+         size: stats.size,
+         type: stats.type,
+         last_modified: stats.mtime
+       }}
     end)
   end
 end
