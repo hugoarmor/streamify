@@ -1,8 +1,9 @@
-import { FileIcon } from "../../assets/file-icon.svg";
-import { FolderIcon } from "../../assets/folder-icon.svg";
-import { MoreIcon } from "../../assets/more-icon.svg";
-import { PlusIcon } from "../../assets/plus-icon.svg";
-import { SearchIcon } from "../../assets/search-icon.svg";
+import { FileIcon } from "../../../assets/file-icon.svg";
+import { FolderIcon } from "../../../assets/folder-icon.svg";
+import { MoreIcon } from "../../../assets/more-icon.svg";
+import { PlusIcon } from "../../../assets/plus-icon.svg";
+import { SearchIcon } from "../../../assets/search-icon.svg";
+
 
 export function FilesLayout() {
   return (
