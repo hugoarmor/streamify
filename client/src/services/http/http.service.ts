@@ -8,7 +8,7 @@ export class Http extends Contract {
     super()
 
     this.client = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL,
+      baseURL: "http://localhost:4000",
     })
   }
 

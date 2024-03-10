@@ -2,6 +2,89 @@
 @tailwind components;
 @tailwind utilities;
 
-.test {
-  color: red;
+$purple-900: #10002B;
+$purple-800: #240046;
+$purple-700: #310D53;
+$purple-650: #37115C;
+$purple-600: #5A189A;
+
+$white: #ECECEC;
+
+html, body {
+  padding: 0;
+  margin: 0;
+  color: $white;
+  background-color: rgba(49,13,83,1);
+}
+
+.bg-stf-purple-900 {
+  background-color: $purple-900;
+}
+
+.bg-stf-purple-800 {
+  background-color: $purple-800;
+}
+
+.bg-stf-purple-700 {
+  background-color: $purple-700;
+}
+
+.bg-stf-purple-650 {
+  background-color: $purple-650;
+}
+
+.bg-stf-purple-600 {
+  background-color: $purple-600;
+}
+
+.bg-stf-white {
+  background-color: $white;
+}
+
+.text-stf-purple-900 {
+  color: $purple-900;
+}
+
+.text-stf-purple-800 {
+  color: $purple-800;
+}
+
+.text-stf-purple-700 {
+  color: $purple-700;
+}
+
+.text-stf-purple-650 {
+  color: $purple-650;
+}
+
+.text-stf-purple-600 {
+  color: $purple-600;
+}
+
+.text-stf-white {
+  color: $white;
+}
+
+.border-stf-purple-900 {
+  border-color: $purple-900;
+}
+
+.border-stf-purple-800 {
+  border-color: $purple-800;
+}
+
+.border-stf-purple-700 {
+  border-color: $purple-700;
+}
+
+.border-stf-purple-650 {
+  border-color: $purple-650;
+}
+
+.border-stf-purple-600 {
+  border-color: $purple-600;
+}
+
+.bg-gradient-purple {
+  background: linear-gradient(180deg, rgba(16,0,43,1) 0%, rgba(49,13,83,1) 100%);
 }
