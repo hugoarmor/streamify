@@ -1,10 +1,12 @@
 export type Props = {
   className?: string;
+  onClick?: (event: React.MouseEvent<SVGSVGElement>) => void;
 };
 
-export function MoreIcon({ className }: Props) {
+export function MoreIcon({ className, onClick }: Props) {
   return (
     <svg
+      onClick={onClick}
       className={className}
       width="25"
       height="25"
