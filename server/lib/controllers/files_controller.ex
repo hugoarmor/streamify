@@ -37,4 +37,19 @@ defmodule FilesController do
 
     conn |> send_resp(200, result)
   end
+
+  delete "/:file_path" do
+    file_path = "#{FilesService.get_managed_folder()}/#{file_path}"
+
+    case FilesService.detele_file(file_path) do
+      :ok ->
+        external_ip = conn.remote_ip |> Tuple.to_list() |> Enum.join(".")
+
+        IO.puts("[INFO] File #{file_path} deleted successfully by #{external_ip}")
+
+        conn |> send_resp(200, "File #{file_path} deleted successfully")
+      {:error, reason} ->
+        conn |> send_resp(400, "File #{file_path} could not be deleted: #{reason}")
+    end
+  end
 end

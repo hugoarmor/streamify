@@ -41,4 +41,8 @@ defmodule FilesService do
        }}
     end)
   end
+
+  def detele_file(file_path) do
+    File.rm(file_path)
+  end
 end
