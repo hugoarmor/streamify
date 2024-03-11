@@ -30,11 +30,14 @@ defmodule FilesService do
       file_path = Path.join(path, file)
       stats = File.stat!(file_path, [{:time, :posix}])
 
+      relative_path = Path.relative_to(file_path, get_managed_folder())
+
       {file,
        %{
          size: stats.size,
          type: stats.type,
-         last_modified: stats.mtime
+         last_modified: stats.mtime,
+         relative_path: relative_path
        }}
     end)
   end
