@@ -1,6 +1,6 @@
 defmodule Api.CORS do
   use Corsica.Router,
-    origins: ["http://localhost:3000"],
+    origins: "*",
     allow_credentials: true,
     max_age: 600
 
