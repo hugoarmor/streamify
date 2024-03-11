@@ -6,6 +6,7 @@ import { FileIcon } from "../../../../assets/file-icon.svg";
 import { MoreIcon } from "../../../../assets/more-icon.svg";
 import { Popover } from "@mui/material";
 import { DownloadIcon } from "../../../../assets/download-icon.svg";
+import { DeleteIcon } from "../../../../assets/delete-icon.svg";
 import { Http } from "../../../../services/http/http.service";
 
 export function TableRow(props: { name: string } & StreamifyFile) {
@@ -28,16 +29,23 @@ export function TableRow(props: { name: string } & StreamifyFile) {
   const getFormattedDate = (posixTime: number) =>
     format(fromUnixTime(posixTime), "dd/MM/yyyy HH:mm");
 
-  const handleClick = (event: React.MouseEvent<SVGSVGElement>) => {
+  const handlePopoverClick = (event: React.MouseEvent<SVGSVGElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handlePopoverClose = () => {
     setAnchorEl(null);
   };
 
   const popoverOpen = Boolean(anchorEl);
   const popoverId = popoverOpen ? "simple-popover" : undefined;
+
+  const handleDeleteFile = async () => {
+    const http = new Http();
+    const response = await http.delete(`api/files/${props.relative_path}`);
+
+    if (response.error) return console.error(response.error.message);
+  }
 
   return (
     <tr className="border-t border-stf-purple-600">
@@ -54,12 +62,12 @@ export function TableRow(props: { name: string } & StreamifyFile) {
         {getFileSize(props.size)}
       </td>
       <td className="flex items-center justify-center">
-        <MoreIcon onClick={handleClick} className="cursor-pointer" />
+        <MoreIcon onClick={handlePopoverClick} className="cursor-pointer" />
         <Popover
           id={popoverId}
           open={popoverOpen}
           anchorEl={anchorEl}
-          onClose={handleClose}
+          onClose={handlePopoverClose}
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "left",
@@ -74,6 +82,13 @@ export function TableRow(props: { name: string } & StreamifyFile) {
               <DownloadIcon />
               Download
             </a>
+            <div
+              className="flex items-center gap-2 hover:opacity-60 rounded cursor-pointer"
+              onClick={handleDeleteFile}
+            >
+              <DeleteIcon />
+              Delete
+            </div>
           </div>
         </Popover>
       </td>
