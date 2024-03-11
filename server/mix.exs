@@ -16,9 +16,12 @@ defmodule Streamify.MixProject do
   def application do
     [
       mod: {Streamify, []},
-      extra_applications: [:logger],
+      extra_applications: extra_applications(Mix.env(),[:logger, :lettuce])
     ]
   end
+
+  defp extra_applications(:dev, default), do: default ++ [:lettuce]
+  defp extra_applications(_, default), do: default
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
@@ -27,7 +30,8 @@ defmodule Streamify.MixProject do
       {:bandit, "~> 1.0"},
       {:distillery, "~> 2.0"},
       {:jason, "~> 1.2"},
-      {:corsica, "~> 2.1"}
+      {:corsica, "~> 2.1"},
+      {:lettuce, "~> 0.3.0", only: :dev}
     ]
   end
 end
