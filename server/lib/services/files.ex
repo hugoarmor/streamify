@@ -4,7 +4,7 @@ defmodule FilesService do
     file_name = Path.basename(file_path)
     stats_with_file_name = Map.put_new(stats, :file_name, file_name)
 
-    stream = File.stream!(file_path, [], 2048)
+    stream = File.stream!(file_path, [], 10**6)
 
     {:ok, stream, stats_with_file_name}
   rescue
