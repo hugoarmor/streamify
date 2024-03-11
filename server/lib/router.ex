@@ -8,8 +8,11 @@ defmodule Router do
   forward("/api/files", to: FilesController)
 
   match _ do
-    conn
-    |> put_resp_header("content-type", "text/html")
-    |> send_file(200, "static/index.html")
+    path = conn.request_path
+
+    case path do
+      "/" -> conn |> send_file(200, "static/build/index.html")
+      _ -> conn |> send_file(200, "static/build#{path}")
+    end
   end
 end
