@@ -8,6 +8,7 @@ export type StreamifyFile = {
   size: number;
   type: string;
   last_modified: number;
+  relative_path: string;
 };
 
 export type StreamifyFiles = {

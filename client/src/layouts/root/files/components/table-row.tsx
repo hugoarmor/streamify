@@ -6,6 +6,7 @@ import { FileIcon } from "../../../../assets/file-icon.svg";
 import { MoreIcon } from "../../../../assets/more-icon.svg";
 import { Popover } from "@mui/material";
 import { DownloadIcon } from "../../../../assets/download-icon.svg";
+import { Http } from "../../../../services/http/http.service";
 
 export function TableRow(props: { name: string } & StreamifyFile) {
   const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
@@ -38,16 +39,6 @@ export function TableRow(props: { name: string } & StreamifyFile) {
   const popoverOpen = Boolean(anchorEl);
   const popoverId = popoverOpen ? "simple-popover" : undefined;
 
-  const popoverItems = [
-    {
-      name: "Download",
-      icon: <DownloadIcon />,
-      onClick: () => {
-        console.log("Download: ", props);
-      },
-    },
-  ];
-
   return (
     <tr className="border-t border-stf-purple-600">
       <td className="py-3 flex items-center gap-2 pointer-events-none">
@@ -75,16 +66,14 @@ export function TableRow(props: { name: string } & StreamifyFile) {
           }}
         >
           <div className="flex flex-col gap-2 px-4 py-4 bg-stf-purple-900 border border-stf-purple-600 text-stf-white text-xs">
-            {popoverItems.map((item, index) => (
-              <div
-                key={index}
-                onClick={item.onClick}
-                className="flex items-center gap-2 hover:opacity-60 rounded cursor-pointer"
-              >
-                {item.icon}
-                {item.name}
-              </div>
-            ))}
+            <a
+              href={`http://localhost:4000/api/files/${props.relative_path}`}
+              className="flex items-center gap-2 hover:opacity-60 rounded cursor-pointer"
+              download
+            >
+              <DownloadIcon />
+              Download
+            </a>
           </div>
         </Popover>
       </td>

@@ -17,13 +17,14 @@ export function FilesTable({ files }: Props) {
         </tr>
       </thead>
       <tbody>
-        {Object.entries(files).map(([name, { type, size, last_modified }]) => (
+        {Object.entries(files).map(([name, { type, size, last_modified, relative_path }]) => (
           <TableRow
             key={name}
             name={name}
             type={type}
             size={size}
             last_modified={last_modified}
+            relative_path={relative_path}
           />
         ))}
       </tbody>
