@@ -7,10 +7,15 @@ import { MoreIcon } from "../../../../assets/more-icon.svg";
 import { Popover } from "@mui/material";
 import { DownloadIcon } from "../../../../assets/download-icon.svg";
 import { DeleteIcon } from "../../../../assets/delete-icon.svg";
-import { Http } from "../../../../services/http/http.service";
+import { useMutation, useQuery } from "react-query";
+import { FileQueries } from "../../../../queries/files";
+import { RenameIcon } from "../../../../assets/rename-icon.svg";
 
 export function TableRow(props: { name: string } & StreamifyFile) {
   const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
+  const { mutateAsync: destroyFile } = useMutation("deleteFile", FileQueries.destroy);
+  const { mutateAsync: renameFile } = useMutation("renameFile", FileQueries.rename);
+  const { refetch: refetchFiles } = useQuery("files")
 
   const getFileSize = (size: number) => {
     const units = ["B", "KB", "MB", "GB", "TB"];
@@ -41,10 +46,20 @@ export function TableRow(props: { name: string } & StreamifyFile) {
   const popoverId = popoverOpen ? "simple-popover" : undefined;
 
   const handleDeleteFile = async () => {
-    const http = new Http();
-    const response = await http.delete(`api/files/${props.relative_path}`);
+    await destroyFile(props.relative_path);
 
-    if (response.error) return console.error(response.error.message);
+    setAnchorEl(null);
+    refetchFiles()
+  }
+
+  const handleRenameFile = async () => {
+    const newPath = prompt("New file name");
+
+    if (newPath) {
+      await renameFile({ oldPath: props.relative_path, newPath });
+
+      refetchFiles()
+    }
   }
 
   return (
@@ -88,6 +103,13 @@ export function TableRow(props: { name: string } & StreamifyFile) {
             >
               <DeleteIcon />
               Delete
+            </div>
+            <div
+              className="flex items-center gap-2 hover:opacity-60 rounded cursor-pointer"
+              onClick={handleRenameFile}
+            >
+              <RenameIcon />
+              Rename
             </div>
           </div>
         </Popover>
