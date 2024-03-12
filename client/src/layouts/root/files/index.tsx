@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
 import { PlusIcon } from "../../../assets/plus-icon.svg";
 import { SearchIcon } from "../../../assets/search-icon.svg";
 import { FilesTable } from "./components/table";
-import { Http } from "../../../services/http/http.service";
+import { FileQueries } from "../../../queries/files";
+import { useQuery } from "react-query";
 
 export type StreamifyFile = {
   size: number;
@@ -16,18 +16,7 @@ export type StreamifyFiles = {
 };
 
 export function FilesLayout() {
-  const [files, setFiles] = useState<StreamifyFiles>({});
-
-  useEffect(() => {
-    (async () => {
-      const http = new Http();
-      const response = await http.get<StreamifyFiles>("api/files");
-
-      if (response.error) return console.error(response.error.message);
-
-      setFiles(response.data);
-    })();
-  }, []);
+  const { data: files, isSuccess } = useQuery("files", FileQueries.getAll);
 
   return (
     <section className="w-full h-full px-20 flex items-center justify-center">
@@ -46,7 +35,7 @@ export function FilesLayout() {
           </button>
         </div>
         <div className="h-full pt-10 px-14 justify-center bg-stf-purple-800 border border-stf-purple-600 rounded-xl">
-          <FilesTable files={files} />
+          {isSuccess && <FilesTable files={files} />}
         </div>
       </section>
     </section>
