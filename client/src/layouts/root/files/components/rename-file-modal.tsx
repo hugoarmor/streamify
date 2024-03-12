@@ -31,7 +31,7 @@ export function RenameFileModal(props: Props) {
 
   const Input = () => {
     useEffect(() => {
-      if (!inputRef.current) return;
+      if (!inputRef.current || loading) return;
 
       inputRef.current.value = props.fileName || "";
       inputRef.current.focus();

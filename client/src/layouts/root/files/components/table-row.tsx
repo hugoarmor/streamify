@@ -60,7 +60,14 @@ export function TableRow(props: { name: string } & StreamifyFile) {
 
   return (
     <>
-      {isRenameModalOpen && <RenameFileModal open={isRenameModalOpen} onClose={handleCloseRenameModal} fileName={props.name} onSubmit={handleRenameFile} />}
+      {isRenameModalOpen && (
+        <RenameFileModal
+          open={isRenameModalOpen}
+          onClose={handleCloseRenameModal}
+          fileName={props.name}
+          onSubmit={handleRenameFile}
+        />
+      )}
       <tr className="border-t border-stf-purple-600">
         <td className="py-3 flex items-center gap-2 pointer-events-none">
           <div className="w-10 flex items-center justify-center">
@@ -79,25 +86,32 @@ export function TableRow(props: { name: string } & StreamifyFile) {
             <div className="flex flex-col gap-2 px-4 py-4 bg-stf-purple-900 border border-stf-purple-600 text-stf-white text-xs">
               <a
                 href={`http://localhost:4000/api/files/${props.relative_path}`}
-                className="flex items-center gap-2 hover:opacity-60 rounded cursor-pointer"
+                className="flex items-center gap-2 hover:opacity-60 cursor-pointer"
                 download
               >
-                <DownloadIcon />
+                <div className="w-5 h-5 flex items-center justify-center">
+                  <DownloadIcon />
+                </div>
                 Download
               </a>
               <div
-                className="flex items-center gap-2 hover:opacity-60 rounded cursor-pointer"
-                onClick={handleDeleteFile}
-              >
-                <DeleteIcon />
-                Delete
-              </div>
-              <div
-                className="flex items-center gap-2 hover:opacity-60 rounded cursor-pointer"
+                className="flex items-center gap-2 hover:opacity-60 cursor-pointer"
                 onClick={handleClickRenameFile}
               >
-                <RenameIcon />
+                <div className="w-5 h-5 flex items-center justify-center">
+                  <RenameIcon />
+                </div>
                 Rename
+              </div>
+              <div className="text-red-400 border-t border-stf-purple-600"></div>
+              <div
+                className="flex items-center gap-2 hover:opacity-60 cursor-pointer text-red-400"
+                onClick={handleDeleteFile}
+              >
+                <div className="w-5 h-5 flex items-center justify-center">
+                  <DeleteIcon />
+                </div>
+                Delete
               </div>
             </div>
           </Popover>
