@@ -45,4 +45,8 @@ defmodule FilesService do
   def detele_file(file_path) do
     File.rm(file_path)
   end
+
+  def rename_file(old_path, new_path) do
+    File.rename(old_path, new_path)
+  end
 end
