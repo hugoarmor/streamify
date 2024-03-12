@@ -1,18 +1,16 @@
 import { format, fromUnixTime } from "date-fns";
 import { StreamifyFile } from "..";
-import { useState } from "react";
 import { FolderIcon } from "../../../../assets/folder-icon.svg";
 import { FileIcon } from "../../../../assets/file-icon.svg";
 import { MoreIcon } from "../../../../assets/more-icon.svg";
-import { Popover } from "@mui/material";
 import { DownloadIcon } from "../../../../assets/download-icon.svg";
 import { DeleteIcon } from "../../../../assets/delete-icon.svg";
 import { useMutation, useQuery } from "react-query";
 import { FileQueries } from "../../../../queries/files";
 import { RenameIcon } from "../../../../assets/rename-icon.svg";
+import { Popover } from "../../../../components/popover";
 
 export function TableRow(props: { name: string } & StreamifyFile) {
-  const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
   const { mutateAsync: destroyFile } = useMutation("deleteFile", FileQueries.destroy);
   const { mutateAsync: renameFile } = useMutation("renameFile", FileQueries.rename);
   const { refetch: refetchFiles } = useQuery("files")
@@ -34,32 +32,20 @@ export function TableRow(props: { name: string } & StreamifyFile) {
   const getFormattedDate = (posixTime: number) =>
     format(fromUnixTime(posixTime), "dd/MM/yyyy HH:mm");
 
-  const handlePopoverClick = (event: React.MouseEvent<SVGSVGElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const popoverOpen = Boolean(anchorEl);
-  const popoverId = popoverOpen ? "simple-popover" : undefined;
-
   const handleDeleteFile = async () => {
     await destroyFile(props.relative_path);
 
-    setAnchorEl(null);
     refetchFiles()
   }
 
   const handleRenameFile = async () => {
     const newPath = prompt("New file name");
 
-    if (newPath) {
-      await renameFile({ oldPath: props.relative_path, newPath });
+    if (!newPath) return;
 
-      refetchFiles()
-    }
+    await renameFile({ oldPath: props.relative_path, newPath });
+
+    refetchFiles()
   }
 
   return (
@@ -77,16 +63,8 @@ export function TableRow(props: { name: string } & StreamifyFile) {
         {getFileSize(props.size)}
       </td>
       <td className="flex items-center justify-center">
-        <MoreIcon onClick={handlePopoverClick} className="cursor-pointer" />
         <Popover
-          id={popoverId}
-          open={popoverOpen}
-          anchorEl={anchorEl}
-          onClose={handlePopoverClose}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
+          anchorElement={<MoreIcon className="cursor-pointer" />}
         >
           <div className="flex flex-col gap-2 px-4 py-4 bg-stf-purple-900 border border-stf-purple-600 text-stf-white text-xs">
             <a
