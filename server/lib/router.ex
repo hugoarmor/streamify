@@ -1,8 +1,14 @@
 defmodule Router do
   use Plug.Router
 
-  plug Api.CORS
+  plug(Api.CORS)
+
   plug(:match)
+  plug(Plug.Parsers,
+    parsers: [:json],
+    pass: ["application/json", "text/json"],
+    json_decoder: Jason
+  )
   plug(:dispatch)
 
   forward("/api/files", to: FilesController)
