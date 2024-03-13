@@ -22,18 +22,18 @@ defmodule FilesController do
           conn |> chunk(chunk)
         end)
 
-        external_ip = conn.remote_ip |> Tuple.to_list() |> Enum.join(".")
-
-        IO.puts("[INFO] File #{file_path} streamed successfully to #{external_ip}")
-
         conn
+
       {:error, message} ->
         conn |> send_resp(400, message)
     end
   end
 
   get "/" do
-    result = FilesService.get_managed_folder() |> FilesService.get_folder_files!() |> Jason.encode!(pretty: true)
+    result =
+      FilesService.get_managed_folder()
+      |> FilesService.get_folder_files!()
+      |> Jason.encode!(pretty: true)
 
     conn |> send_resp(200, result)
   end
@@ -43,11 +43,8 @@ defmodule FilesController do
 
     case FilesService.detele_file(file_path) do
       :ok ->
-        external_ip = conn.remote_ip |> Tuple.to_list() |> Enum.join(".")
-
-        IO.puts("[INFO] File #{file_path} deleted successfully by #{external_ip}")
-
         conn |> send_resp(200, "File #{file_path} deleted successfully")
+
       {:error, reason} ->
         conn |> send_resp(400, "File #{file_path} could not be deleted: #{reason}")
     end
@@ -61,13 +58,11 @@ defmodule FilesController do
 
     case FilesService.rename_file(file_path, new_file_path) do
       :ok ->
-        external_ip = conn.remote_ip |> Tuple.to_list() |> Enum.join(".")
-
-        IO.puts("[INFO] File #{file_path} renamed to #{new_file_path} successfully by #{external_ip}")
-
         conn |> send_resp(200, "File #{file_path} renamed to #{new_file_path} successfully")
+
       {:error, reason} ->
-        conn |> send_resp(400, "File #{file_path} could not be renamed to #{new_file_path}: #{reason}")
+        conn
+        |> send_resp(400, "File #{file_path} could not be renamed to #{new_file_path}: #{reason}")
     end
   end
 end
