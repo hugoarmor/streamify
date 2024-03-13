@@ -75,10 +75,10 @@ export function TableRow(props: { name: string } & StreamifyFile) {
           </div>
           {props.name}
         </td>
-        <td className="text-center font-thin pointer-events-none">
+        <td className="text-center font-thin pointer-events-none text-sm">
           {getFormattedDate(props.last_modified)}
         </td>
-        <td className="text-center font-thin pointer-events-none">
+        <td className="text-center font-thin pointer-events-none text-sm">
           {getFileSize(props.size)}
         </td>
         <td className="flex items-center justify-center">
