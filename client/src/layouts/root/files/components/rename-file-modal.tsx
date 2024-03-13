@@ -58,14 +58,15 @@ export function RenameFileModal(props: Props) {
       }}
       PaperProps={{
         style: {
-          borderRadius: "0.5rem",
           backgroundColor: "#240046",
+          borderRadius: "0.5rem",
+          border: "1px solid #5A189A",
         },
       }}
     >
       <form
         onSubmit={handleSubmit}
-        className="bg-stf-purple-800 w-96 border rounded-lg border-stf-purple-600 text-stf-white"
+        className="bg-stf-purple-800 w-96 rounded-lg text-stf-white"
       >
         <div className="px-8 pt-8 pb-4 gap-6 flex flex-col w-full">
           <p className="text-lg">Rename file</p>
