@@ -1,6 +1,13 @@
-export function DeleteIcon() {
+type Props = {
+  onClick?: () => void;
+  className?: string;
+}
+
+export function DeleteIcon(props: Props) {
   return (
     <svg
+      onClick={props.onClick}
+      className={props.className}
       width="20"
       height="20"
       viewBox="0 0 16 16"
