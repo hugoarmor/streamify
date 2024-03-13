@@ -1,0 +1,12 @@
+.dashed-border {
+  border: 3px dashed #5A189A;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  margin: 20px 0;
+  transition: all 0.3s ease;
+  &:hover {
+    border-color: #ECECEC;
+  }
+}
