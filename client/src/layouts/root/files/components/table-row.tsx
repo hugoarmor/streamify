@@ -11,6 +11,7 @@ import { RenameIcon } from "../../../../assets/rename-icon.svg";
 import { Popover } from "../../../../components/popover";
 import { RenameFileModal } from "./rename-file-modal";
 import { useState } from "react";
+import { FileService } from "../../../../services/file";
 
 export function TableRow(props: { name: string } & StreamifyFile) {
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
@@ -24,20 +25,6 @@ export function TableRow(props: { name: string } & StreamifyFile) {
     FileQueries.rename
   );
   const { refetch: refetchFiles } = useQuery("files");
-
-  const getFileSize = (size: number) => {
-    const units = ["B", "KB", "MB", "GB", "TB"];
-    let unitIndex = 0;
-
-    while (size >= 1000 && unitIndex < units.length - 1) {
-      size /= 1000;
-      unitIndex++;
-    }
-
-    const fixedSize = size % 1 === 0 ? size : size.toFixed(2);
-
-    return `${fixedSize} ${units[unitIndex]}`;
-  };
 
   const getFormattedDate = (posixTime: number) =>
     format(fromUnixTime(posixTime), "dd/MM/yyyy HH:mm");
@@ -79,7 +66,7 @@ export function TableRow(props: { name: string } & StreamifyFile) {
           {getFormattedDate(props.last_modified)}
         </td>
         <td className="text-center font-thin pointer-events-none text-sm">
-          {getFileSize(props.size)}
+          {FileService.getFileSize(props.size)}
         </td>
         <td className="flex items-center justify-center">
           <Popover anchorElement={<MoreIcon className="cursor-pointer" />}>
