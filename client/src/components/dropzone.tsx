@@ -4,9 +4,10 @@ import "./dropzone.style.scss";
 
 interface Props {
   onDrop: (acceptedFiles: File[]) => void;
+  className?: string;
 }
 
-function MyDropzone({ onDrop }: Props) {
+function MyDropzone({ onDrop, className }: Props) {
   const handleDrop = useCallback((acceptedFiles: File[]) => {
     onDrop(acceptedFiles);
   }, [onDrop]);
@@ -16,7 +17,7 @@ function MyDropzone({ onDrop }: Props) {
   return (
     <div
       {...getRootProps()}
-      className={`bg-stf-purple-700 dashed-border ${isDragActive ? "border-stf-white" : ""}`}
+      className={`bg-stf-purple-700 dashed-border ${isDragActive ? "border-stf-white" : ""} ${className}`}
     >
       <input {...getInputProps()} />
       <p className='text-sm'>Drag & drop files here, or click to select files</p>

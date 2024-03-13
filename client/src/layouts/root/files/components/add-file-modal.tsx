@@ -8,9 +8,6 @@ import "./add-file-modal.style.scss";
 
 export function AddFileModal(props: { open: boolean; onClose?: () => void }) {
   const [files, setFiles] = useState<{ [key: string]: File }>({});
-  const [loading, setLoading] = useState(false);
-
-  const handleClose = () => props.onClose?.();
 
   const handleAddFiles = (acceptedFiles: File[]) => {
     const newFiles = acceptedFiles.reduce((acc, file) => {
@@ -45,7 +42,10 @@ export function AddFileModal(props: { open: boolean; onClose?: () => void }) {
       }}
     >
       <form
-        onSubmit={() => {}}
+        onSubmit={e => {
+          e.preventDefault()
+          props.onClose?.()
+        }}
         className="add-file-modal bg-stf-purple-800 rounded-lg text-stf-white"
       >
         <div className="px-8 pt-8 pb-4 flex flex-col w-full">
@@ -75,17 +75,13 @@ export function AddFileModal(props: { open: boolean; onClose?: () => void }) {
           <button
             type="button"
             onClick={props.onClose}
-            className={`${
-              loading ? "opacity-50 pointer-events-none" : ""
-            } hover:opacity-70 bg-stf-purple-650 border border-stf-purple-600 text-stf-white rounded px-5 py-1`}
+            className={`hover:opacity-70 bg-stf-purple-650 border border-stf-purple-600 text-stf-white rounded px-5 py-1`}
           >
             Cancel
           </button>
           <button
             type="submit"
-            className={`${
-              loading ? "opacity-50 pointer-events-none" : ""
-            } hover:opacity-70 bg-stf-white border border-stf-purple-600 text-stf-purple-600 rounded px-5 py-1`}
+            className={`hover:opacity-70 bg-stf-white border border-stf-purple-600 text-stf-purple-600 rounded px-5 py-1`}
           >
             Upload
           </button>

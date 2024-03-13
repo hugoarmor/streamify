@@ -30,7 +30,7 @@ export function FilesLayout() {
 
   return (
     <>
-      <AddFileModal open={true} onClose={handleCloseAddFileModal} />
+      <AddFileModal open={isAddFileModalOpen} onClose={handleCloseAddFileModal} />
       <section className="w-full h-full px-20 flex items-center justify-center">
         <section className="flex py-10 w-full h-full flex-col">
           <div className="w-full mb-4 flex items-center justify-between">
