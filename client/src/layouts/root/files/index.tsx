@@ -8,6 +8,7 @@ import { FolderIcon } from "../../../assets/folder-icon.svg";
 import { FileIcon } from "../../../assets/file-icon.svg";
 import { AddFileModal } from "./components/add-file-modal";
 import { useState } from "react";
+import { FilesUploadProgress } from "../../../components/files-upload-progress";
 
 export type StreamifyFile = {
   size: number;
@@ -28,9 +29,24 @@ export function FilesLayout() {
   const handleCloseAddFileModal = () => setIsAddFileModalOpen(false);
   const handleNewFolderClick = () => {};
 
+  const filesUpload = [
+    {
+      name: "file_name",
+      progress: 60,
+    },
+    {
+      name: "file_name",
+      progress: 50,
+    },
+  ]
+
   return (
     <>
-      <AddFileModal open={isAddFileModalOpen} onClose={handleCloseAddFileModal} />
+      <FilesUploadProgress files={filesUpload} />
+      <AddFileModal
+        open={isAddFileModalOpen}
+        onClose={handleCloseAddFileModal}
+      />
       <section className="w-full h-full px-20 flex items-center justify-center">
         <section className="flex py-10 w-full h-full flex-col">
           <div className="w-full mb-4 flex items-center justify-between">
