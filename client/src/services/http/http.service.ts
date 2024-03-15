@@ -17,8 +17,8 @@ export class Http extends Contract {
     return this.try<T>(() => this.client.get(path, config))
   }
 
-  public async post<T>(path: string, data?: any) {
-    return this.try<T>(() => this.client.post(path, data))
+  public async post<T>(path: string, data?: any, config?: AxiosRequestConfig<any> | undefined) {
+    return this.try<T>(() => this.client.post(path, data, config))
   }
 
   public async put<T>(path: string, data?: any, config?: AxiosRequestConfig<any> | undefined) {
