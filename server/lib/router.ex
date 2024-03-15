@@ -5,8 +5,8 @@ defmodule Router do
 
   plug(:match)
   plug(Plug.Parsers,
-    parsers: [:json],
-    pass: ["application/json", "text/json"],
+    parsers: [:json, :urlencoded, {:multipart, length: 100_000_000_000_000}],
+    pass: ["application/json", "text/json", "application/x-www-form-urlencoded", "multipart/form-data"],
     json_decoder: Jason
   )
   plug(:dispatch)
