@@ -4,7 +4,7 @@ defmodule FilesService do
     file_name = Path.basename(file_path)
     stats_with_file_name = Map.put_new(stats, :file_name, file_name)
 
-    stream = File.stream!(file_path, [], 10**6)
+    stream = File.stream!(file_path, [], 10 ** 6)
 
     {:ok, stream, stats_with_file_name}
   rescue
@@ -48,5 +48,13 @@ defmodule FilesService do
 
   def rename_file(old_path, new_path) do
     File.rename(old_path, new_path)
+  end
+
+  def upload_file_stream(file_path, stream) do
+    Enum.each(stream, fn chunk ->
+      File.write!(file_path, chunk, [:append])
+    end)
+  rescue
+    error -> {:error, "File #{file_path} could not be uploaded: #{inspect(error)}"}
   end
 end
