@@ -50,7 +50,11 @@ defmodule FilesService do
     File.rename(old_path, new_path)
   end
 
-  def upload_file_stream(file_path, stream) do
+  def upload_file_stream(file_path, stream, is_append? \\ false) do
+    if !is_append? do
+      File.rm(file_path)
+    end
+
     Enum.each(stream, fn chunk ->
       File.write!(file_path, chunk, [:append])
     end)
