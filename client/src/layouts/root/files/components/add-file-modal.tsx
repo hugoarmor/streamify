@@ -6,7 +6,13 @@ import { DeleteIcon } from "../../../../assets/delete-icon.svg";
 import { FileIcon } from "../../../../assets/file-icon.svg";
 import "./add-file-modal.style.scss";
 
-export function AddFileModal(props: { open: boolean; onClose?: () => void }) {
+type Props = {
+  open: boolean;
+  onClose?: () => void;
+  onAddFiles?: (files: File[]) => void;
+};
+
+export function AddFileModal(props: Props) {
   const [files, setFiles] = useState<{ [key: string]: File }>({});
 
   const handleAddFiles = (acceptedFiles: File[]) => {
@@ -22,6 +28,14 @@ export function AddFileModal(props: { open: boolean; onClose?: () => void }) {
     const newFiles = { ...files };
     delete newFiles[name];
     setFiles(newFiles);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const filesToUpload = Object.values(files);
+
+    props.onAddFiles?.(filesToUpload)
   };
 
   return (
@@ -42,10 +56,7 @@ export function AddFileModal(props: { open: boolean; onClose?: () => void }) {
       }}
     >
       <form
-        onSubmit={e => {
-          e.preventDefault()
-          props.onClose?.()
-        }}
+        onSubmit={handleSubmit}
         className="add-file-modal bg-stf-purple-800 rounded-lg text-stf-white"
       >
         <div className="px-8 pt-8 pb-4 flex flex-col w-full">
