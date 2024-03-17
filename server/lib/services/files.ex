@@ -61,4 +61,8 @@ defmodule FilesService do
   rescue
     error -> {:error, "File #{file_path} could not be uploaded: #{inspect(error)}"}
   end
+
+  def copy_file(old_path, new_path) do
+    File.cp(old_path, new_path)
+  end
 end

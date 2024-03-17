@@ -69,11 +69,8 @@ defmodule FilesController do
   post "/upload" do
     file_path = "#{FilesService.get_managed_folder()}/#{conn.body_params["file_name"]}"
     file = conn.body_params["file"]
-    is_append? = conn.body_params["append"] === "true"
 
-    stream = file.path |> File.stream!([], 2048)
-
-    case FilesService.upload_file_stream(file_path, stream, is_append?) do
+    case FilesService.copy_file(file.path, file_path) do
       :ok ->
         conn |> send_resp(200, "Chunk uploaded successfully")
 
