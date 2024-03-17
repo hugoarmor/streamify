@@ -7,8 +7,9 @@ import { Popover } from "../../../components/popover";
 import { FolderIcon } from "../../../assets/folder-icon.svg";
 import { FileIcon } from "../../../assets/file-icon.svg";
 import { AddFileModal } from "./components/add-file-modal";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { FilesUploadProgress } from "../../../components/files-upload-progress";
+import { useFileUploader } from "../../../hooks/useFileUpload";
 
 export type StreamifyFile = {
   size: number;
@@ -24,29 +25,25 @@ export type StreamifyFiles = {
 export function FilesLayout() {
   const { data: files, isSuccess } = useQuery("files", FileQueries.getAll);
   const [isAddFileModalOpen, setIsAddFileModalOpen] = useState(false);
+  const { appendFiles, filesUploads: filesBeingUploaded } = useFileUploader();
 
   const handleNewFileClick = () => setIsAddFileModalOpen(true);
   const handleCloseAddFileModal = () => setIsAddFileModalOpen(false);
   const handleNewFolderClick = () => {};
+  const handleUploadFiles = (files: File[]) => {
+    appendFiles(files);
+    handleCloseAddFileModal();
+  };
 
-  const filesUpload = [
-    {
-      name: "file_name",
-      progress: 60,
-    },
-    {
-      name: "file_name",
-      progress: 50,
-    },
-  ]
+  const filesUploads = useMemo(() => {
+    return filesBeingUploaded.map((file) => ({
+      name: file.file.name,
+      progress: file.progress,
+    }));
+  }, [filesBeingUploaded]);
 
   return (
     <>
-      <FilesUploadProgress files={filesUpload} />
-      <AddFileModal
-        open={isAddFileModalOpen}
-        onClose={handleCloseAddFileModal}
-      />
       <section className="w-full h-full px-20 flex items-center justify-center">
         <section className="flex py-10 w-full h-full flex-col">
           <div className="w-full mb-4 flex items-center justify-between">
@@ -92,6 +89,14 @@ export function FilesLayout() {
           </div>
         </section>
       </section>
+      {filesUploads.length > 0 && <FilesUploadProgress files={filesUploads} />}
+      {isAddFileModalOpen && (
+        <AddFileModal
+          open={isAddFileModalOpen}
+          onClose={handleCloseAddFileModal}
+          onAddFiles={handleUploadFiles}
+        />
+      )}
     </>
   );
 }
