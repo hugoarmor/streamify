@@ -13,7 +13,14 @@ import { RenameFileModal } from "./rename-file-modal";
 import { useState } from "react";
 import { FileService } from "../../../../services/file";
 
-export function TableRow(props: { name: string } & StreamifyFile) {
+type Props = {
+  name: string;
+  isFocused?: boolean;
+  onFocus?: () => void;
+  file: StreamifyFile;
+};
+
+export function TableRow(props: Props) {
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
 
   const { mutateAsync: destroyFile } = useMutation(
@@ -30,7 +37,7 @@ export function TableRow(props: { name: string } & StreamifyFile) {
     format(fromUnixTime(posixTime), "dd/MM/yyyy HH:mm");
 
   const handleDeleteFile = async () => {
-    await destroyFile(props.relative_path);
+    await destroyFile(props.file.relative_path);
 
     refetchFiles();
   };
@@ -39,7 +46,7 @@ export function TableRow(props: { name: string } & StreamifyFile) {
   const handleCloseRenameModal = () => setIsRenameModalOpen(false);
 
   const handleRenameFile = async (newPath: string) => {
-    await renameFile({ oldPath: props.relative_path, newPath });
+    await renameFile({ oldPath: props.file.relative_path, newPath });
 
     refetchFiles();
     setIsRenameModalOpen(false);
@@ -55,24 +62,24 @@ export function TableRow(props: { name: string } & StreamifyFile) {
           onSubmit={handleRenameFile}
         />
       )}
-      <tr className="border-t border-stf-purple-600">
-        <td className="py-3 flex items-center gap-2 pointer-events-none">
+      <tr className={`border-t border-stf-purple-600 transition-all ${props.isFocused ? "bg-stf-purple-650" : ""}`}>
+        <td onClick={props.onFocus} className="py-3 flex items-center gap-2 cursor-default">
           <div className="w-10 flex items-center justify-center">
-            {props.type === "directory" ? <FolderIcon /> : <FileIcon />}
+            {props.file.type === "directory" ? <FolderIcon /> : <FileIcon />}
           </div>
           {props.name}
         </td>
-        <td className="text-center font-thin pointer-events-none text-sm">
-          {getFormattedDate(props.last_modified)}
+        <td onClick={props.onFocus} className="text-center font-thin cursor-default text-sm">
+          {getFormattedDate(props.file.last_modified)}
         </td>
-        <td className="text-center font-thin pointer-events-none text-sm">
-          {FileService.getFileSize(props.size)}
+        <td onClick={props.onFocus} className="text-center font-thin cursor-default text-sm">
+          {FileService.getFileSize(props.file.size)}
         </td>
         <td className="flex items-center justify-center">
           <Popover anchorElement={<MoreIcon className="cursor-pointer" />}>
             <div className="flex flex-col gap-2 px-4 py-4 bg-stf-purple-900 border border-stf-purple-600 text-stf-white text-xs">
               <a
-                href={`http://localhost:4000/api/files/${props.relative_path}`}
+                href={`http://localhost:4000/api/files/${props.file.relative_path}`}
                 className="flex items-center gap-2 hover:opacity-60 cursor-pointer"
                 download
               >

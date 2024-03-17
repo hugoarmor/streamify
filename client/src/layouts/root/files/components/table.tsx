@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { StreamifyFiles } from "..";
 import { TableRow } from "./table-row";
 import "./table.style.scss";
@@ -7,6 +8,12 @@ type Props = {
 };
 
 export function FilesTable({ files }: Props) {
+  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+
+  const handleRowFocus = (name: string) => {
+    setSelectedFiles(prev => [...prev, name]);
+  }
+
   return (
     <table className="w-full table-fixed">
       <thead>
@@ -35,14 +42,13 @@ export function FilesTable({ files }: Props) {
       </thead>
       <tbody>
         {Object.entries(files).map(
-          ([name, { type, size, last_modified, relative_path }]) => (
+          ([name, file]) => (
             <TableRow
+              isFocused={selectedFiles.some(f => f === name)}
               key={name}
               name={name}
-              type={type}
-              size={size}
-              last_modified={last_modified}
-              relative_path={relative_path}
+              file={file}
+              onFocus={() => handleRowFocus(name)}
             />
           )
         )}
