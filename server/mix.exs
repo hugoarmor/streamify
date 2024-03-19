@@ -31,7 +31,8 @@ defmodule Streamify.MixProject do
       {:distillery, "~> 2.0"},
       {:jason, "~> 1.2"},
       {:corsica, "~> 2.1"},
-      {:lettuce, "~> 0.3.0", only: :dev}
+      {:lettuce, "~> 0.3.0", only: :dev},
+      {:uuid, "~> 1.1" }
     ]
   end
 end
