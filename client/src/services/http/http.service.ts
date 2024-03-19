@@ -25,11 +25,11 @@ export class Http extends Contract {
     return this.try<T>(() => this.client.put(path, data, config))
   }
 
-  public async patch<T>(path: string, data?: any) {
-    return this.try<T>(() => this.client.patch(path, data))
+  public async patch<T>(path: string, data?: any, config?: AxiosRequestConfig<any> | undefined) {
+    return this.try<T>(() => this.client.patch(path, data, config))
   }
 
-  public async delete<T>(path: string) {
-    return this.try<T>(() => this.client.delete(path))
+  public async delete<T>(path: string, data?: any, config?: AxiosRequestConfig<any> | undefined) {
+    return this.try<T>(() => this.client.delete(path, { data, ...config}))
   }
 }
