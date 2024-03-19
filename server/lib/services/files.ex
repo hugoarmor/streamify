@@ -42,7 +42,7 @@ defmodule FilesService do
     end)
   end
 
-  def detele_file(file_path) do
+  def delete_file(file_path) do
     File.rm(file_path)
   end
 
@@ -64,5 +64,21 @@ defmodule FilesService do
 
   def copy_file(old_path, new_path) do
     File.cp(old_path, new_path)
+  end
+
+  def zip_files(zip_file_path, file_paths) do
+    managed_folder = get_managed_folder()
+
+    file_paths =
+      file_paths
+      |> Enum.map(fn filename -> Path.join(managed_folder, filename) end)
+      |> Enum.map(&String.to_charlist/1)
+
+    case :zip.create(zip_file_path, file_paths) do
+      {:ok, zip_file_path} -> {:ok, zip_file_path}
+      {:error, reason} ->
+        delete_file(zip_file_path)
+        {:error, reason}
+    end
   end
 end
