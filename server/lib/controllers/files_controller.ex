@@ -110,8 +110,6 @@ defmodule FilesController do
   get "zip/:zip_id" do
     file_path = "#{FilesService.get_managed_folder()}/#{zip_id}.zip"
 
-    IO.puts("File path: #{file_path}")
-
     result = FilesService.get_file_stream(file_path)
 
     case result do
