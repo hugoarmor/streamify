@@ -52,6 +52,8 @@ export function TableRow(props: Props) {
     setIsRenameModalOpen(false);
   };
 
+  const isFolder = props.file.type === "directory"
+
   return (
     <>
       {isRenameModalOpen && (
@@ -65,7 +67,7 @@ export function TableRow(props: Props) {
       <tr className={`border-t border-stf-purple-600 transition-all ${props.isFocused ? "bg-stf-purple-650" : ""}`}>
         <td onClick={props.onFocus} className="py-3 flex items-center gap-2 cursor-default">
           <div className="w-10 flex items-center justify-center">
-            {props.file.type === "directory" ? <FolderIcon /> : <FileIcon />}
+            {isFolder ? <FolderIcon /> : <FileIcon />}
           </div>
           {props.name}
         </td>
