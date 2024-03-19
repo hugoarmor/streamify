@@ -11,5 +11,13 @@ export class FileService {
     const fixedSize = size % 1 === 0 ? size : size.toFixed(2);
 
     return `${fixedSize} ${units[unitIndex]}`;
-  };
+  }
+
+  static downloadFile(url: string) {
+    const link = document.createElement("a");
+    link.setAttribute('href', url);
+    link.setAttribute("download", "download");
+    document.body.appendChild(link);
+    link.click();
+  }
 }

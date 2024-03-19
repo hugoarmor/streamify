@@ -1,17 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StreamifyFiles } from "..";
 import { TableRow } from "./table-row";
 import "./table.style.scss";
 import { CloseIcon } from "../../../../assets/close-icon.svg";
 import { DownloadIcon } from "../../../../assets/download-icon.svg";
 import { DeleteIcon } from "../../../../assets/delete-icon.svg";
+import { Http } from "../../../../services/http/http.service";
+import { FileService } from "../../../../services/file";
+import { useMutation, useQuery } from "react-query";
+import { FileQueries } from "../../../../queries/files";
 
 type Props = {
   files: StreamifyFiles;
 };
 
 export function FilesTable({ files }: Props) {
-  const [selectedFiles, setSelectedFiles] = useState<Set<String>>(new Set<string>());
+  const [selectedFiles, setSelectedFiles] = useState<Set<String>>(
+    new Set<string>()
+  );
+  const { mutate: zipFiles, data: zipId, reset } = useMutation(
+    "zipFiles",
+    FileQueries.zipFiles
+  );
+  const { refetch } = useQuery("files");
 
   const handleRowFocus = (name: string) => {
     const newSet = new Set(selectedFiles);
@@ -28,6 +39,35 @@ export function FilesTable({ files }: Props) {
   const canShowActions = selectedFiles.size > 0;
   const onCancelShowActions = () => setSelectedFiles(new Set());
 
+  const handleDownloadClick = async () => {
+    const filePaths = [...selectedFiles.values()] as string[];
+
+    if (filePaths.length === 0) return;
+    if (filePaths.length > 1) return zipFiles(filePaths);
+
+    const url = `http://localhost:4000/api/files/${filePaths[0]}`;
+
+    return FileService.downloadFile(url);
+  };
+
+  const handleDeleteClick = async () => {
+    const filePaths = [...selectedFiles.values()] as string[];
+
+    await FileQueries.destroyMany(filePaths);
+
+    setSelectedFiles(new Set());
+    refetch();
+  }
+
+  useEffect(() => {
+    if (!zipId) return;
+
+    const url = `http://localhost:4000/api/files/zip/${zipId}`;
+
+    FileService.downloadFile(url);
+    reset();
+  }, [zipId]);
+
   return (
     <>
       {canShowActions && (
@@ -41,8 +81,11 @@ export function FilesTable({ files }: Props) {
             </div>
             <p className="text-xs ml-3 mr-7 pointer-events-none">1 Selected</p>
             <div className="flex gap-2">
-              <DownloadIcon className="cursor-pointer" />
-              <DeleteIcon className="cursor-pointer" color="#ECECEC" />
+              <DownloadIcon
+                onClick={handleDownloadClick}
+                className="cursor-pointer"
+              />
+              <DeleteIcon onClick={handleDeleteClick} className="cursor-pointer" color="#ECECEC" />
             </div>
           </div>
         </div>

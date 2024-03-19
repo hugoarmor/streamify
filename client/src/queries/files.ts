@@ -22,6 +22,18 @@ export class FileQueries {
     return result.data;
   }
 
+  static async destroyMany(paths: string[]) {
+    const http = new Http();
+
+    const result = await http.delete<string>("api/files", {
+      file_paths: paths,
+    });
+
+    if (result.error) throw result.error;
+
+    return result.data;
+  }
+
   static async rename({
     oldPath,
     newPath,
@@ -37,6 +49,18 @@ export class FileQueries {
         new_file_path: newPath,
       },
     );
+
+    if (result.error) throw result.error;
+
+    return result.data;
+  }
+
+  static async zipFiles(filePaths: string[]) {
+    const http = new Http();
+
+    const result = await http.post<string>("api/files/zip", {
+      file_paths: filePaths,
+    });
 
     if (result.error) throw result.error;
 
