@@ -29,3 +29,5 @@ streamify-*.tar
 *_router.ex
 
 old.zip
+
+*streamify_server_dev.db*

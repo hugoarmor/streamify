@@ -32,6 +32,8 @@ defmodule StreamifyServerWeb.Router do
     post "/files/upload", FilesController, :upload
     post "/files/zip", FilesController, :zip
     get "/files/zip/:zip_id", FilesController, :download_zip
+
+    resources "/users", UsersController
   end
 
   # Enables LiveDashboard only for development
