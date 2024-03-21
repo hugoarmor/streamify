@@ -39,7 +39,7 @@ export function JamsIndexLayout() {
     FileQueries.rename
   );
 
-  const { data: jam } = useQuery("jam", () => JamQueries.show(jamId!), {
+  const { data: jam, isError } = useQuery("jam", () => JamQueries.show(jamId!), {
     enabled: !!jamId,
   });
   const { data: files, refetch } = useQuery(
@@ -108,6 +108,25 @@ export function JamsIndexLayout() {
     if(minutesDifference > 0) return `${minutesDifference} minutes`;
   }, [jam?.expires_at]);
 
+  const isExpired = useMemo(() => {
+    if(!jam?.expires_at) return false;
+
+    const expiration = new Date(jam.expires_at);
+    const now = new Date();
+
+    return now > expiration;
+  }, [])
+
+  if(isExpired || isError) return (
+    <main className="bg-gradient-purple flex flex-col w-full h-svh px-20 pt-10">
+      <header className="h-16 pb-10 font-light">
+        <h1 className="text-stf-white text-xl">
+          Not found
+        </h1>
+      </header>
+    </main>
+  )
+
   return (
     <main className="bg-gradient-purple flex flex-col w-full h-svh px-20 pt-10">
       <header className="h-16 pb-10 font-light">
@@ -173,7 +192,7 @@ export function JamsIndexLayout() {
               <p>No files to display</p>
             )}
           </div>
-          <div className="flex mt-auto w-full h-2 bg-stf-purple-600 rounded-b-xl">
+          <div className="hidden mt-auto w-full h-2 bg-stf-purple-600 rounded-b-xl">
             <div
               style={{ width: `${uploadProgress}%` }}
               className="h-full flex bg-green-400 rounded-bl-xl"
