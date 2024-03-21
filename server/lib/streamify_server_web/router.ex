@@ -34,6 +34,7 @@ defmodule StreamifyServerWeb.Router do
     get "/files/zip/:zip_id", FilesController, :download_zip
 
     resources "/users", UsersController
+    resources "/jams", JamsController
   end
 
   # Enables LiveDashboard only for development
