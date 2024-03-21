@@ -80,7 +80,7 @@ export function FilesTable({ files, rowActions }: Props) {
             >
               <CloseIcon />
             </div>
-            <p className="text-xs ml-3 mr-7 pointer-events-none">1 Selected</p>
+            <p className="text-xs ml-3 mr-7 pointer-events-none">{selectedFiles.size} Selected</p>
             <div className="flex gap-2">
               <DownloadIcon
                 onClick={handleDownloadClick}
