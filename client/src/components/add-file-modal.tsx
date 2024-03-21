@@ -1,10 +1,10 @@
 import { Dialog } from "@mui/material";
 import { useState } from "react";
-import MyDropzone from "../../../../components/dropzone";
-import { FileService } from "../../../../services/file";
-import { DeleteIcon } from "../../../../assets/delete-icon.svg";
-import { FileIcon } from "../../../../assets/file-icon.svg";
 import "./add-file-modal.style.scss";
+import { FileIcon } from "../assets/file-icon.svg";
+import { FileService } from "../services/file";
+import { DeleteIcon } from "../assets/delete-icon.svg";
+import MyDropzone from "./dropzone";
 
 type Props = {
   open: boolean;

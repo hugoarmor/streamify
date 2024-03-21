@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import { StreamifyFiles } from "..";
 import { TableRow } from "./table-row";
 import "./table.style.scss";
-import { CloseIcon } from "../../../../assets/close-icon.svg";
-import { DownloadIcon } from "../../../../assets/download-icon.svg";
-import { DeleteIcon } from "../../../../assets/delete-icon.svg";
-import { Http } from "../../../../services/http/http.service";
-import { FileService } from "../../../../services/file";
 import { useMutation, useQuery } from "react-query";
-import { FileQueries } from "../../../../queries/files";
+import { StreamifyFiles } from "../../layouts/root/files";
+import { FileQueries } from "../../queries/files";
+import { FileService } from "../../services/file";
+import { CloseIcon } from "../../assets/close-icon.svg";
+import { DownloadIcon } from "../../assets/download-icon.svg";
+import { DeleteIcon } from "../../assets/delete-icon.svg";
 
 type Props = {
   files: StreamifyFiles;

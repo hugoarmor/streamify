@@ -1,15 +1,15 @@
 import { PlusIcon } from "../../../assets/plus-icon.svg";
 import { SearchIcon } from "../../../assets/search-icon.svg";
-import { FilesTable } from "./components/table";
 import { FileQueries } from "../../../queries/files";
 import { useQuery } from "react-query";
 import { Popover } from "../../../components/popover";
 import { FolderIcon } from "../../../assets/folder-icon.svg";
 import { FileIcon } from "../../../assets/file-icon.svg";
-import { AddFileModal } from "./components/add-file-modal";
 import { useMemo, useState } from "react";
 import { FilesUploadProgress } from "../../../components/files-upload-progress";
 import { useFileUploader } from "../../../hooks/useFileUpload";
+import { FilesTable } from "../../../components/files-table/table";
+import { AddFileModal } from "../../../components/add-file-modal";
 
 export type StreamifyFile = {
   size: number;

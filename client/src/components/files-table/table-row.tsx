@@ -1,17 +1,17 @@
 import { format, fromUnixTime } from "date-fns";
-import { StreamifyFile } from "..";
-import { FolderIcon } from "../../../../assets/folder-icon.svg";
-import { FileIcon } from "../../../../assets/file-icon.svg";
-import { MoreIcon } from "../../../../assets/more-icon.svg";
-import { DownloadIcon } from "../../../../assets/download-icon.svg";
-import { DeleteIcon } from "../../../../assets/delete-icon.svg";
 import { useMutation, useQuery } from "react-query";
-import { FileQueries } from "../../../../queries/files";
-import { RenameIcon } from "../../../../assets/rename-icon.svg";
-import { Popover } from "../../../../components/popover";
-import { RenameFileModal } from "./rename-file-modal";
+import { RenameFileModal } from "../rename-file-modal";
 import { useState } from "react";
-import { FileService } from "../../../../services/file";
+import { FileQueries } from "../../queries/files";
+import { StreamifyFile } from "../../layouts/root/files";
+import { FolderIcon } from "../../assets/folder-icon.svg";
+import { FileIcon } from "../../assets/file-icon.svg";
+import { FileService } from "../../services/file";
+import { MoreIcon } from "../../assets/more-icon.svg";
+import { Popover } from "../popover";
+import { DownloadIcon } from "../../assets/download-icon.svg";
+import { RenameIcon } from "../../assets/rename-icon.svg";
+import { DeleteIcon } from "../../assets/delete-icon.svg";
 
 type Props = {
   name: string;
