@@ -14,6 +14,7 @@ import { StreamifyLogo } from "../../assets/streamify-logo.svg";
 import { JamQueries } from "../../queries/jam";
 import { useParams } from "react-router-dom";
 import { FileService } from "../../services/file";
+import { getMinutes } from "date-fns";
 
 export type StreamifyFile = {
   size: number;
@@ -92,6 +93,21 @@ export function JamsIndexLayout() {
     FileService.downloadFile(`http://localhost:4000/api/files/${encodeURIComponent(filePath)}`)
   };
 
+  const expirationTime = useMemo(() => {
+    if(!jam?.expires_at) return null;
+
+    const expiration = new Date(jam.expires_at);
+    const now = new Date();
+
+    const minutesDifference = getMinutes(expiration) - getMinutes(now);
+    const hoursDifference = expiration.getHours() - now.getHours();
+    const daysDifference = expiration.getDate() - now.getDate();
+
+    if(daysDifference > 0) return `${daysDifference} days`;
+    if(hoursDifference > 0) return `${hoursDifference} hours`;
+    if(minutesDifference > 0) return `${minutesDifference} minutes`;
+  }, [jam?.expires_at]);
+
   return (
     <main className="bg-gradient-purple flex flex-col w-full h-svh px-20 pt-10">
       <header className="h-16 pb-10 font-light">
@@ -99,7 +115,7 @@ export function JamsIndexLayout() {
           This is a <strong className="font-bold">Streamify Jam</strong>
         </h1>
         <h1 className="text-stf-white text-xl">
-          You have <strong className="font-bold">23 hours</strong> to share your
+          You have <strong className="font-bold">{expirationTime}</strong> to share your
           files here...
         </h1>
       </header>
