@@ -13,6 +13,7 @@ import { SearchIcon } from "../../assets/search-icon.svg";
 import { StreamifyLogo } from "../../assets/streamify-logo.svg";
 import { JamQueries } from "../../queries/jam";
 import { useParams } from "react-router-dom";
+import { FileService } from "../../services/file";
 
 export type StreamifyFile = {
   size: number;
@@ -27,6 +28,16 @@ export type StreamifyFiles = {
 
 export function JamsIndexLayout() {
   const { jamId } = useParams();
+
+  const { mutateAsync: destroyFile } = useMutation(
+    "deleteFile",
+    FileQueries.destroy
+  );
+  const { mutateAsync: renameFile } = useMutation(
+    "renameFile",
+    FileQueries.rename
+  );
+
   const { data: jam } = useQuery("jam", () => JamQueries.show(jamId!), {
     enabled: !!jamId,
   });
@@ -68,6 +79,18 @@ export function JamsIndexLayout() {
   }, [filesBeingUploaded]);
 
   const hasFiles = Object.keys(files ?? {}).length > 0;
+
+  const handleRowFileDelete = async (file_path: string) => {
+    await destroyFile(file_path)
+    refetch()
+  };
+  const handleRowFileRename = async (name: string, newName: string) => {
+    await renameFile({ oldPath: name, newPath: `${jam?.folder_relative_path}/${newName}` })
+    refetch()
+  };
+  const handleRowFileDownload = (filePath: string) => {
+    FileService.downloadFile(`http://localhost:4000/api/files/${encodeURIComponent(filePath)}`)
+  };
 
   return (
     <main className="bg-gradient-purple flex flex-col w-full h-svh px-20 pt-10">
@@ -122,7 +145,14 @@ export function JamsIndexLayout() {
         <div className="flex flex-col bg-stf-purple-800 border-stf-purple-600 h-full rounded-xl border">
           <div className="px-14 pt-10">
             {hasFiles ? (
-              <FilesTable files={files!} />
+              <FilesTable
+                files={files!}
+                rowActions={{
+                  onFileDelete: handleRowFileDelete,
+                  onFileRename: handleRowFileRename,
+                  onFileDownload: handleRowFileDownload
+                }}
+              />
             ) : (
               <p>No files to display</p>
             )}

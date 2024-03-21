@@ -13,42 +13,34 @@ import { DownloadIcon } from "../../assets/download-icon.svg";
 import { RenameIcon } from "../../assets/rename-icon.svg";
 import { DeleteIcon } from "../../assets/delete-icon.svg";
 
+export type FileRowActions = {
+  onFileDelete?: (filePath: string) => void | Promise<void>;
+  onFileRename?: (filePath: string, newName: string) => void | Promise<void>;
+  onFileDownload?: (filePath: string) => void | Promise<void>;
+}
+
 type Props = {
   name: string;
   isFocused?: boolean;
   onFocus?: () => void;
   file: StreamifyFile;
+  actions?: FileRowActions;
 };
 
 export function TableRow(props: Props) {
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
 
-  const { mutateAsync: destroyFile } = useMutation(
-    "deleteFile",
-    FileQueries.destroy
-  );
-  const { mutateAsync: renameFile } = useMutation(
-    "renameFile",
-    FileQueries.rename
-  );
-  const { refetch: refetchFiles } = useQuery("files");
-
   const getFormattedDate = (posixTime: number) =>
     format(fromUnixTime(posixTime), "dd/MM/yyyy HH:mm");
-
-  const handleDeleteFile = async () => {
-    await destroyFile(props.file.relative_path);
-
-    refetchFiles();
-  };
 
   const handleClickRenameFile = () => setIsRenameModalOpen(true);
   const handleCloseRenameModal = () => setIsRenameModalOpen(false);
 
+  const handleDeleteFile = () => props.actions?.onFileDelete?.(props.file.relative_path)
+  const handleFileDownload = () => props.actions?.onFileDownload?.(props.file.relative_path)
   const handleRenameFile = async (newPath: string) => {
-    await renameFile({ oldPath: props.file.relative_path, newPath });
+    await props.actions?.onFileRename?.(props.file.relative_path, newPath);
 
-    refetchFiles();
     setIsRenameModalOpen(false);
   };
 
@@ -80,16 +72,15 @@ export function TableRow(props: Props) {
         <td className="flex items-center justify-center">
           <Popover anchorElement={<MoreIcon className="cursor-pointer" />}>
             <div className="flex flex-col gap-2 px-4 py-4 bg-stf-purple-900 border border-stf-purple-600 text-stf-white text-xs">
-              <a
-                href={`http://localhost:4000/api/files/${props.file.relative_path}`}
+              <div
+                onClick={handleFileDownload}
                 className="flex items-center gap-2 hover:opacity-60 cursor-pointer"
-                download
               >
                 <div className="w-5 h-5 flex items-center justify-center">
                   <DownloadIcon />
                 </div>
                 Download
-              </a>
+              </div>
               <div
                 className="flex items-center gap-2 hover:opacity-60 cursor-pointer"
                 onClick={handleClickRenameFile}

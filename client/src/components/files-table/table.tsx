@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TableRow } from "./table-row";
+import { FileRowActions, TableRow } from "./table-row";
 import "./table.style.scss";
 import { useMutation, useQuery } from "react-query";
 import { StreamifyFiles } from "../../layouts/root/files";
@@ -11,16 +11,18 @@ import { DeleteIcon } from "../../assets/delete-icon.svg";
 
 type Props = {
   files: StreamifyFiles;
+  rowActions?: FileRowActions;
 };
 
-export function FilesTable({ files }: Props) {
+export function FilesTable({ files, rowActions }: Props) {
   const [selectedFiles, setSelectedFiles] = useState<Set<String>>(
     new Set<string>()
   );
-  const { mutate: zipFiles, data: zipId, reset } = useMutation(
-    "zipFiles",
-    FileQueries.zipFiles
-  );
+  const {
+    mutate: zipFiles,
+    data: zipId,
+    reset,
+  } = useMutation("zipFiles", FileQueries.zipFiles);
   const { refetch } = useQuery("files");
 
   const handleRowFocus = (name: string) => {
@@ -56,7 +58,7 @@ export function FilesTable({ files }: Props) {
 
     setSelectedFiles(new Set());
     refetch();
-  }
+  };
 
   useEffect(() => {
     if (!zipId) return;
@@ -84,7 +86,11 @@ export function FilesTable({ files }: Props) {
                 onClick={handleDownloadClick}
                 className="cursor-pointer"
               />
-              <DeleteIcon onClick={handleDeleteClick} className="cursor-pointer" color="#ECECEC" />
+              <DeleteIcon
+                onClick={handleDeleteClick}
+                className="cursor-pointer"
+                color="#ECECEC"
+              />
             </div>
           </div>
         </div>
@@ -122,6 +128,7 @@ export function FilesTable({ files }: Props) {
               name={name}
               file={file}
               onFocus={() => handleRowFocus(name)}
+              actions={rowActions}
             />
           ))}
         </tbody>

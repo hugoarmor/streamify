@@ -19,7 +19,7 @@ export class FileQueries {
   static async destroy(path: string) {
     const http = new Http();
 
-    const result = await http.delete<string>(`api/files/${path}`);
+    const result = await http.delete<string>(`api/files/${encodeURIComponent(path)}`);
 
     if (result.error) throw result.error;
 
@@ -48,7 +48,7 @@ export class FileQueries {
     const http = new Http();
 
     const result = await http.patch<string>(
-      `api/files/${oldPath}/rename`,
+      `api/files/${encodeURIComponent(oldPath)}/rename`,
       {
         new_file_path: newPath,
       },

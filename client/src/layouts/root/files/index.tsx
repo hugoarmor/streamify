@@ -1,7 +1,7 @@
 import { PlusIcon } from "../../../assets/plus-icon.svg";
 import { SearchIcon } from "../../../assets/search-icon.svg";
 import { FileQueries } from "../../../queries/files";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { Popover } from "../../../components/popover";
 import { FolderIcon } from "../../../assets/folder-icon.svg";
 import { FileIcon } from "../../../assets/file-icon.svg";
@@ -10,6 +10,7 @@ import { FilesUploadProgress } from "../../../components/files-upload-progress";
 import { useFileUploader } from "../../../hooks/useFileUpload";
 import { FilesTable } from "../../../components/files-table/table";
 import { AddFileModal } from "../../../components/add-file-modal";
+import { FileService } from "../../../services/file";
 
 export type StreamifyFile = {
   size: number;
@@ -23,9 +24,23 @@ export type StreamifyFiles = {
 };
 
 export function FilesLayout() {
-  const { data: files, isSuccess } = useQuery("files", () => FileQueries.getAll());
+  const {
+    data: files,
+    isSuccess,
+    refetch,
+  } = useQuery("files", () => FileQueries.getAll());
   const [isAddFileModalOpen, setIsAddFileModalOpen] = useState(false);
-  const { appendFiles, filesUploads: filesBeingUploaded } = useFileUploader();
+  const { appendFiles, filesUploads: filesBeingUploaded } = useFileUploader({
+    onFileUpload: () => refetch(),
+  });
+  const { mutateAsync: destroyFile } = useMutation(
+    "deleteFile",
+    FileQueries.destroy
+  );
+  const { mutateAsync: renameFile } = useMutation(
+    "renameFile",
+    FileQueries.rename
+  );
 
   const handleNewFileClick = () => setIsAddFileModalOpen(true);
   const handleCloseAddFileModal = () => setIsAddFileModalOpen(false);
@@ -41,6 +56,20 @@ export function FilesLayout() {
       progress: file.progress,
     }));
   }, [filesBeingUploaded]);
+
+  const handleRowFileDelete = async (file_path: string) => {
+    await destroyFile(file_path);
+    refetch();
+  };
+  const handleRowFileRename = async (name: string, newName: string) => {
+    await renameFile({ oldPath: name, newPath: newName });
+    refetch();
+  };
+  const handleRowFileDownload = (filePath: string) => {
+    FileService.downloadFile(
+      `http://localhost:4000/api/files/${encodeURIComponent(filePath)}`
+    );
+  };
 
   return (
     <>
@@ -85,7 +114,16 @@ export function FilesLayout() {
             </Popover>
           </div>
           <div className="bg-stf-purple-800 border-stf-purple-600 h-full justify-center rounded-xl border px-14 pt-10">
-            {isSuccess && <FilesTable files={files} />}
+            {isSuccess && (
+              <FilesTable
+                files={files}
+                rowActions={{
+                  onFileDelete: handleRowFileDelete,
+                  onFileRename: handleRowFileRename,
+                  onFileDownload: handleRowFileDownload,
+                }}
+              />
+            )}
           </div>
         </section>
       </section>
