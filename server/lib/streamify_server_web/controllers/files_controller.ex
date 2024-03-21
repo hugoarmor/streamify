@@ -1,12 +1,19 @@
 defmodule StreamifyServerWeb.FilesController do
   use StreamifyServerWeb, :controller
 
-  def index(conn, _params) do
+  def index(conn, params) do
+    folder_relative_path = params["folder_relative_path"]
+    folder_path = Path.join(FilesService.get_managed_folder(), folder_relative_path || "")
+
     result =
-      FilesService.get_managed_folder()
+      folder_path
       |> FilesService.get_folder_files!()
 
     json(conn, result)
+
+  rescue
+    error ->
+      conn |> send_resp(400, "Folder not found: #{inspect(error)}")
   end
 
   def show(conn, %{"file_path" => file_path}) do
@@ -71,6 +78,8 @@ defmodule StreamifyServerWeb.FilesController do
 
   def upload(conn, %{"file_name" => file_name, "file" => file}) do
     file_path = "#{FilesService.get_managed_folder()}/#{file_name}"
+
+    IO.puts "file_path: #{file_path}"
 
     case FilesService.copy_file(file.path, file_path) do
       :ok ->

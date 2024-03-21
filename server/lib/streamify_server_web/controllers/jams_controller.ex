@@ -7,8 +7,10 @@ defmodule StreamifyServerWeb.JamsController do
   end
 
   def show(conn, %{"id" => id}) do
-    jam = StreamifyServer.Repo.get(Jam, id)
-    json conn, Jam.to_map(jam)
+    case StreamifyServer.Repo.get(Jam, id) do
+      nil -> conn |> send_resp(404, "Not found")
+      jam -> json conn, Jam.to_map(jam)
+    end
   end
 
   def create(conn, %{"jam" => jam_params}) do

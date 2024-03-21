@@ -2,10 +2,14 @@ import { StreamifyFiles } from "../layouts/root/files";
 import { Http } from "../services/http/http.service";
 
 export class FileQueries {
-  static async getAll() {
+  static async getAll(folder_relative_path?: string) {
     const http = new Http();
 
-    const result = await http.get<StreamifyFiles>("api/files");
+    const result = await http.get<StreamifyFiles>("api/files", {
+      params: {
+        folder_relative_path
+      }
+    });
 
     if (result.error) throw result.error;
 

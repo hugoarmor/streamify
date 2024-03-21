@@ -35,7 +35,6 @@ defmodule Jam do
       folder_relative_path: user.folder_relative_path,
       expires_at: user.expires_at,
       bytes_limit: user.bytes_limit,
-      password: user.password,
       inserted_at: user.inserted_at,
       updated_at: user.updated_at
     }

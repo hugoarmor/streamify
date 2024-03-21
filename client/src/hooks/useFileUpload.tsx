@@ -5,12 +5,17 @@ import { useQuery } from "react-query";
 type FileUploadType = {
   file: File;
   progress: number;
+  folder_relative_path?: string;
 };
 
-export function useFileUploader() {
+type Params = {
+  folder_relative_path?: string;
+  onFileUpload?: (file: File) => void;
+};
+
+export function useFileUploader(props: Params = {}) {
   const [filesUploads, setFilesUploads] = useState<FileUploadType[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const { refetch } = useQuery("files");
 
   const appendFiles = (newFiles: File[]) => {
     const newFilesUpload = newFiles.map((file) => ({
@@ -28,9 +33,11 @@ export function useFileUploader() {
 
     setIsUploading(true);
 
+    const fileName = props.folder_relative_path ? `${props.folder_relative_path}/${fileUpload.file.name}` : fileUpload.file.name;
+
     const formData = new FormData();
     formData.append("file", fileUpload.file);
-    formData.append("file_name", fileUpload.file.name);
+    formData.append("file_name", fileName);
 
     const http = new Http();
 
@@ -49,7 +56,7 @@ export function useFileUploader() {
 
     setFilesUploads((prevFiles) => prevFiles.slice(1));
     setIsUploading(false);
-    refetch();
+    props.onFileUpload?.(fileUpload.file);
   };
 
   useEffect(() => {

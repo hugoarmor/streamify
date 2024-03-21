@@ -23,7 +23,7 @@ export type StreamifyFiles = {
 };
 
 export function FilesLayout() {
-  const { data: files, isSuccess } = useQuery("files", FileQueries.getAll);
+  const { data: files, isSuccess } = useQuery("files", () => FileQueries.getAll());
   const [isAddFileModalOpen, setIsAddFileModalOpen] = useState(false);
   const { appendFiles, filesUploads: filesBeingUploaded } = useFileUploader();
 
