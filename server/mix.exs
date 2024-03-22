@@ -28,7 +28,7 @@ defmodule Streamify.MixProject do
     [
       {:plug_cowboy, "~> 2.0"},
       {:bandit, "~> 1.0"},
-      {:distillery, "~> 2.0"},
+      # {:distillery, "~> 2.0"},
       {:jason, "~> 1.2"},
       {:corsica, "~> 2.1"},
       {:lettuce, "~> 0.3.0", only: :dev}
