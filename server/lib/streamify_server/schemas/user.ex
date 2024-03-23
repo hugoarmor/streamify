@@ -42,4 +42,21 @@ defmodule StreamifyServer.User do
   def to_map_many(users) do
     Enum.map(users, &to_map/1)
   end
+
+  def authenticate_user(email, password) do
+    user = StreamifyServer.Repo.get_by(StreamifyServer.User, email: email)
+
+    IO.inspect(Argon2.verify_pass(password, user.password_hash))
+
+    case user do
+      nil -> {:error, "User not found"}
+      _ ->
+        case Argon2.verify_pass(password, user.password_hash) do
+          true -> {:ok, user}
+          false -> {:error, "Invalid credentials"}
+        end
+    end
+  rescue
+    _ -> {:error, "Invalid credentials"}
+  end
 end

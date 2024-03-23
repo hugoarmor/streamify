@@ -51,7 +51,8 @@ defmodule StreamifyServer.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:uuid, "~> 1.1"},
       {:corsica, "~> 2.1"},
-      {:argon2_elixir, "~> 4.0"}
+      {:argon2_elixir, "~> 4.0"},
+      {:guardian, "~> 2.0"}
     ]
   end
 

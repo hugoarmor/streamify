@@ -2,39 +2,55 @@ defmodule StreamifyServerWeb.Router do
   use StreamifyServerWeb, :router
 
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, {StreamifyServerWeb.LayoutView, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, {StreamifyServerWeb.LayoutView, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
+  end
+
+  pipeline :auth do
+    plug(Guardian.Plug.Pipeline,
+      module: StreamifyServerWeb.Guardian,
+      error_handler: StreamifyServerWeb.AuthErrorHandler
+    )
+
+    plug(Guardian.Plug.VerifySession, claims: %{"typ" => "access"})
+    plug(Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"})
+    plug(Guardian.Plug.EnsureAuthenticated)
+    plug(Guardian.Plug.LoadResource, allow_blank: true)
   end
 
   scope "/", StreamifyServerWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
-    get "/", PageController, :index
+    get("/", PageController, :index)
+  end
+
+  scope "/auth", StreamifyServerWeb do
+    post("/sign_in", AuthController, :authenticate)
   end
 
   # Other scopes may use custom stacks.
   scope "/api", StreamifyServerWeb do
-    pipe_through :api
+    pipe_through([:api, :auth])
 
-    get "/files", FilesController, :index
-    get "/files/:file_path", FilesController, :show
-    delete "/files/:file_path", FilesController, :destroy
-    delete "/files", FilesController, :destroy_many
-    patch "/files/:old_path/rename", FilesController, :rename
-    post "/files/upload", FilesController, :upload
-    post "/files/zip", FilesController, :zip
-    get "/files/zip/:zip_id", FilesController, :download_zip
+    get("/files", FilesController, :index)
+    get("/files/:file_path", FilesController, :show)
+    delete("/files/:file_path", FilesController, :destroy)
+    delete("/files", FilesController, :destroy_many)
+    patch("/files/:old_path/rename", FilesController, :rename)
+    post("/files/upload", FilesController, :upload)
+    post("/files/zip", FilesController, :zip)
+    get("/files/zip/:zip_id", FilesController, :download_zip)
 
-    resources "/users", UsersController
-    resources "/jams", JamsController
+    resources("/users", UsersController)
+    resources("/jams", JamsController)
   end
 
   # Enables LiveDashboard only for development
@@ -48,9 +64,9 @@ defmodule StreamifyServerWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      live_dashboard "/dashboard", metrics: StreamifyServerWeb.Telemetry
+      live_dashboard("/dashboard", metrics: StreamifyServerWeb.Telemetry)
     end
   end
 
@@ -60,9 +76,9 @@ defmodule StreamifyServerWeb.Router do
   # node running the Phoenix server.
   if Mix.env() == :dev do
     scope "/dev" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
   end
 end
