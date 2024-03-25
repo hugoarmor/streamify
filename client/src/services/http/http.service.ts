@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { Contract } from "./contract";
+import { parseCookies } from "nookies"
 
 export class Http extends Contract {
   private client: AxiosInstance = axios.create()
@@ -7,9 +8,14 @@ export class Http extends Contract {
   constructor() {
     super()
 
+    const bearerToken = parseCookies().bearerToken
+
     this.client = axios.create({
       baseURL: "http://localhost:4000",
-      withCredentials: true
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${bearerToken}`
+      }
     })
   }
 
