@@ -9,6 +9,7 @@ defmodule Jam do
     field :bytes_limit, :integer
     field :expires_at, :utc_datetime
     field :password, :string
+    field :can_edit, :boolean, default: false
 
     timestamps()
   end
@@ -16,7 +17,7 @@ defmodule Jam do
   @doc false
   def changeset(user, params \\ %{}) do
     user
-    |> cast(params, [:folder_relative_path, :expires_at, :bytes_limit, :password])
+    |> cast(params, [:folder_relative_path, :expires_at, :bytes_limit, :password, :can_edit])
     |> validate_required([:folder_relative_path, :password])
     |> unique_constraint(:folder_relative_path)
     |> put_password_hash()

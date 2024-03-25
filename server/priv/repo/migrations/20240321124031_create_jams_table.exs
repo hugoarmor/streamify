@@ -8,6 +8,7 @@ defmodule StreamifyServer.Repo.Migrations.CreateJamsTable do
       add :expires_at, :utc_datetime
       add :bytes_limit, :integer
       add :password, :string, null: false
+      add :can_edit, :boolean, null: false, default: false
 
       timestamps()
     end
