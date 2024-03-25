@@ -9,11 +9,27 @@ export type Jam = {
 	updated_at: string
 }
 
+export type JamCreate = {
+  folder_relative_path: string;
+  expires_at: string;
+  password: string;
+}
+
 export class JamQueries {
   static async show(jamId: string) {
     const http = new Http();
 
     const result = await http.get<Jam>(`api/jams/${jamId}`);
+
+    if (result.error) throw result.error;
+
+    return result.data;
+  }
+
+  static async create(payload: JamCreate) {
+    const http = new Http();
+
+    const result = await http.post<Jam>(`api/jams`, payload);
 
     if (result.error) throw result.error;
 

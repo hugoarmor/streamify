@@ -11,6 +11,7 @@ import { useFileUploader } from "../../../hooks/useFileUpload";
 import { FilesTable } from "../../../components/files-table/table";
 import { AddFileModal } from "../../../components/add-file-modal";
 import { FileService } from "../../../services/file";
+import { NewJamModal } from "../../../components/new-jam-modal";
 
 export type StreamifyFile = {
   size: number;
@@ -30,6 +31,7 @@ export function FilesLayout() {
     refetch,
   } = useQuery("files", () => FileQueries.getAll());
   const [isAddFileModalOpen, setIsAddFileModalOpen] = useState(false);
+  const [isNewJamModalOpen, setIsNewJamModalOpen] = useState(false);
   const { appendFiles, filesUploads: filesBeingUploaded } = useFileUploader({
     onFileUpload: () => refetch(),
   });
@@ -65,6 +67,7 @@ export function FilesLayout() {
     await renameFile({ oldPath: name, newPath: newName });
     refetch();
   };
+  const handleRowFolderJam = console.log
   const handleRowFileDownload = (filePath: string) => {
     FileService.downloadFile(
       `http://localhost:4000/api/files/${encodeURIComponent(filePath)}`
@@ -121,6 +124,7 @@ export function FilesLayout() {
                   onFileDelete: handleRowFileDelete,
                   onFileRename: handleRowFileRename,
                   onFileDownload: handleRowFileDownload,
+                  onFolderJam: handleRowFolderJam,
                 }}
               />
             )}
