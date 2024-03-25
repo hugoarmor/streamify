@@ -28,3 +28,6 @@ streamify-*.tar
 .DS_Store
 *_router.ex
 
+old.zip
+
+*streamify_server_dev.db*

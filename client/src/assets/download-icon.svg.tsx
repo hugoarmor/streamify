@@ -1,6 +1,13 @@
-export function DownloadIcon() {
+type Props = {
+  onClick?: () => void;
+  className?: string;
+};
+
+export function DownloadIcon(props: Props) {
   return (
     <svg
+      className={props.className}
+      onClick={props.onClick}
       width="20"
       height="20"
       viewBox="0 0 20 20"
