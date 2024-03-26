@@ -19,7 +19,6 @@ defmodule Jam do
     user
     |> cast(params, [:folder_relative_path, :expires_at, :bytes_limit, :password, :can_edit])
     |> validate_required([:folder_relative_path, :password])
-    |> unique_constraint(:folder_relative_path)
     |> put_password_hash()
   end
 
@@ -35,6 +34,7 @@ defmodule Jam do
       id: user.id,
       folder_relative_path: user.folder_relative_path,
       expires_at: user.expires_at,
+      can_edit: user.can_edit,
       bytes_limit: user.bytes_limit,
       inserted_at: user.inserted_at,
       updated_at: user.updated_at

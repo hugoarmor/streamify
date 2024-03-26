@@ -4,7 +4,7 @@ defmodule StreamifyServer.Repo.Migrations.CreateJamsTable do
   def change do
     create table(:jams, primary_key: false) do
       add :id, :uuid, primary_key: true
-      add :folder_relative_path, :string, [null: false, unique: true]
+      add :folder_relative_path, :string, [null: false]
       add :expires_at, :utc_datetime
       add :bytes_limit, :integer
       add :password, :string, null: false
@@ -12,7 +12,5 @@ defmodule StreamifyServer.Repo.Migrations.CreateJamsTable do
 
       timestamps()
     end
-
-    create unique_index(:jams, [:folder_relative_path])
   end
 end
