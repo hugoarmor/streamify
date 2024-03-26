@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useFileUploader } from "../../hooks/useFileUpload";
 import { FileQueries } from "../../queries/files";
 import { PlusIcon } from "../../assets/plus-icon.svg";

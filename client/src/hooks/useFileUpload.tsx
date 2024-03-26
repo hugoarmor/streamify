@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Http } from "../services/http/http.service";
-import { useQuery } from "react-query";
 
 type FileUploadType = {
   file: File;
