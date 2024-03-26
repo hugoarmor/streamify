@@ -11,6 +11,7 @@ import { useFileUploader } from "../../../hooks/useFileUpload";
 import { FilesTable } from "../../../components/files-table/table";
 import { AddFileModal } from "../../../components/add-file-modal";
 import { FileService } from "../../../services/file";
+import { ActionsHeader } from "../../../components/files-table/actions-header";
 
 export type StreamifyFile = {
   size: number;
@@ -44,7 +45,6 @@ export function FilesLayout() {
 
   const handleNewFileClick = () => setIsAddFileModalOpen(true);
   const handleCloseAddFileModal = () => setIsAddFileModalOpen(false);
-  const handleNewFolderClick = () => {};
   const handleUploadFiles = (files: File[]) => {
     appendFiles(files);
     handleCloseAddFileModal();
@@ -75,44 +75,7 @@ export function FilesLayout() {
     <>
       <section className="flex h-full w-full items-center justify-center px-20">
         <section className="flex h-full w-full flex-col py-10">
-          <div className="mb-4 flex w-full items-center justify-between">
-            <div className="relative flex items-center">
-              <SearchIcon className="absolute left-4" />
-              <input
-                type="text"
-                placeholder="Type to search files..."
-                className="placeholder-stf-purple-600 bg-stf-purple-800 border-stf-purple-600 h-8 w-96 rounded-md border pl-10 text-xs outline-none"
-              />
-            </div>
-            <Popover
-              anchorElement={
-                <button className="bg-stf-purple-800 border-stf-purple-600 flex items-center gap-1 rounded-md border px-3 py-1 text-xs hover:opacity-50">
-                  <PlusIcon /> New
-                </button>
-              }
-            >
-              <div className="bg-stf-purple-900 border-stf-purple-600 text-stf-white flex flex-col gap-2 border px-4 py-4 text-xs">
-                <div
-                  onClick={handleNewFileClick}
-                  className="flex cursor-pointer items-center gap-2 hover:opacity-60"
-                >
-                  <div className="flex h-5 w-5 items-center justify-center">
-                    <FileIcon />
-                  </div>
-                  New File
-                </div>
-                <div
-                  onClick={handleNewFolderClick}
-                  className="flex cursor-pointer items-center gap-2 hover:opacity-60"
-                >
-                  <div className="flex h-5 w-5 items-center justify-center">
-                    <FolderIcon />
-                  </div>
-                  New Folder
-                </div>
-              </div>
-            </Popover>
-          </div>
+          <ActionsHeader onNewFileClick={handleNewFileClick} />
           <div className="bg-stf-purple-800 border-stf-purple-600 h-full justify-center rounded-xl border px-14 pt-10">
             {isSuccess && (
               <FilesTable

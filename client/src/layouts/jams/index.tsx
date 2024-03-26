@@ -17,6 +17,8 @@ import { FileService } from "../../services/file";
 import { getMinutes } from "date-fns";
 import { useAuth } from "../../hooks/useAuth";
 import { PasscodeScreen } from "./components/passcode-screen";
+import { ActionsHeader } from "../../components/files-table/actions-header";
+import { DateService } from "../../services/date";
 
 export type StreamifyFile = {
   size: number;
@@ -43,18 +45,21 @@ export function JamsIndexLayout() {
     FileQueries.rename
   );
 
+  const canGetJam = !!jamId && isAuthenticated;
   const { data: jam, isError } = useQuery(
     "jam",
     () => JamQueries.show(jamId!),
     {
-      enabled: !!jamId && isAuthenticated,
+      enabled: canGetJam,
     }
   );
+
+  const canGetFiles = !!jam?.folder_relative_path;
   const { data: files, refetch } = useQuery(
     "files",
     () => FileQueries.getAll(jam?.folder_relative_path),
     {
-      enabled: !!jam?.folder_relative_path,
+      enabled: canGetFiles,
     }
   );
 
@@ -65,16 +70,8 @@ export function JamsIndexLayout() {
 
   const [isAddFileModalOpen, setIsAddFileModalOpen] = useState(false);
 
-  const uploadLimitBytes = 1 * 1024 * 1024 * 1024;
-  const currentUploadSize = 0.3 * 1024 * 1024 * 1024;
-  const uploadProgress = Math.min(
-    (currentUploadSize / uploadLimitBytes) * 100,
-    100
-  );
-
   const handleNewFileClick = () => setIsAddFileModalOpen(true);
   const handleCloseAddFileModal = () => setIsAddFileModalOpen(false);
-  const handleNewFolderClick = () => {};
   const handleUploadFiles = (files: File[]) => {
     appendFiles(files);
     handleCloseAddFileModal();
@@ -106,20 +103,13 @@ export function JamsIndexLayout() {
     );
   };
 
-  const expirationTime = useMemo(() => {
-    if (!jam?.expires_at) return null;
-
-    const expiration = new Date(jam.expires_at);
-    const now = new Date();
-
-    const minutesDifference = getMinutes(expiration) - getMinutes(now);
-    const hoursDifference = expiration.getHours() - now.getHours();
-    const daysDifference = expiration.getDate() - now.getDate();
-
-    if (daysDifference > 0) return `${daysDifference} days`;
-    if (hoursDifference > 0) return `${hoursDifference} hours`;
-    if (minutesDifference > 0) return `${minutesDifference} minutes`;
-  }, [jam?.expires_at]);
+  const expirationTime = useMemo(
+    () =>
+      jam?.expires_at
+        ? DateService.translateDateTime(new Date(jam.expires_at))
+        : null,
+    [jam?.expires_at]
+  );
 
   const isExpired = useMemo(() => {
     if (!jam?.expires_at) return false;
@@ -139,11 +129,18 @@ export function JamsIndexLayout() {
       </main>
     );
 
-  if (!isAuthenticated)
-    return <PasscodeScreen onSubmit={data => signInJamGuest({
-      jamId: jamId!,
-      password: data.passcode
-    })} />
+  if (!isAuthenticated) {
+    return (
+      <PasscodeScreen
+        onSubmit={(data) =>
+          signInJamGuest({
+            jamId: jamId!,
+            password: data.passcode,
+          })
+        }
+      />
+    );
+  }
 
   return (
     <main className="bg-gradient-purple flex flex-col w-full h-svh px-20 pt-10">
@@ -157,44 +154,7 @@ export function JamsIndexLayout() {
         </h1>
       </header>
       <section className="flex h-full w-full flex-col">
-        <div className="mb-4 flex w-full items-center justify-between">
-          <div className="relative flex items-center">
-            <SearchIcon className="absolute left-4" />
-            <input
-              type="text"
-              placeholder="Type to search files..."
-              className="placeholder-stf-purple-600 bg-stf-purple-800 border-stf-purple-600 h-8 w-96 rounded-md border pl-10 text-xs outline-none"
-            />
-          </div>
-          <Popover
-            anchorElement={
-              <button className="bg-stf-purple-800 border-stf-purple-600 flex items-center gap-1 rounded-md border px-3 py-1 text-xs hover:opacity-50">
-                <PlusIcon /> New
-              </button>
-            }
-          >
-            <div className="bg-stf-purple-900 border-stf-purple-600 text-stf-white flex flex-col gap-2 border px-4 py-4 text-xs">
-              <div
-                onClick={handleNewFileClick}
-                className="flex cursor-pointer items-center gap-2 hover:opacity-60"
-              >
-                <div className="flex h-5 w-5 items-center justify-center">
-                  <FileIcon />
-                </div>
-                New File
-              </div>
-              <div
-                onClick={handleNewFolderClick}
-                className="flex cursor-pointer items-center gap-2 hover:opacity-60"
-              >
-                <div className="flex h-5 w-5 items-center justify-center">
-                  <FolderIcon />
-                </div>
-                New Folder
-              </div>
-            </div>
-          </Popover>
-        </div>
+        <ActionsHeader onNewFileClick={handleNewFileClick} />
         <div className="flex flex-col bg-stf-purple-800 border-stf-purple-600 h-full rounded-xl border">
           <div className="px-14 pt-10">
             {hasFiles ? (
@@ -209,12 +169,6 @@ export function JamsIndexLayout() {
             ) : (
               <p>No files to display</p>
             )}
-          </div>
-          <div className="hidden mt-auto w-full h-2 bg-stf-purple-600 rounded-b-xl">
-            <div
-              style={{ width: `${uploadProgress}%` }}
-              className="h-full flex bg-green-400 rounded-bl-xl"
-            ></div>
           </div>
         </div>
       </section>
