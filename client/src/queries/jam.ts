@@ -13,6 +13,7 @@ export type JamCreate = {
   folder_relative_path: string;
   expires_at: string;
   password: string;
+  can_edit: boolean;
 }
 
 export class JamQueries {
@@ -29,7 +30,9 @@ export class JamQueries {
   static async create(payload: JamCreate) {
     const http = new Http();
 
-    const result = await http.post<Jam>(`api/jams`, payload);
+    const result = await http.post<Jam>(`api/jams`, {
+      jam: payload
+    });
 
     if (result.error) throw result.error;
 

@@ -1,8 +1,6 @@
-import { format, fromUnixTime, set } from "date-fns";
-import { useMutation, useQuery } from "react-query";
+import { format, fromUnixTime } from "date-fns";
 import { RenameFileModal } from "../rename-file-modal";
 import { useState } from "react";
-import { FileQueries } from "../../queries/files";
 import { StreamifyFile } from "../../layouts/root/files";
 import { FolderIcon } from "../../assets/folder-icon.svg";
 import { FileIcon } from "../../assets/file-icon.svg";
@@ -12,14 +10,13 @@ import { Popover } from "../popover";
 import { DownloadIcon } from "../../assets/download-icon.svg";
 import { RenameIcon } from "../../assets/rename-icon.svg";
 import { DeleteIcon } from "../../assets/delete-icon.svg";
-import { NewJamFormSchema, NewJamModal } from "../new-jam-modal";
-import { JamCreate } from "../../queries/jam";
+import { NewJamModal } from "../new-jam-modal";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 export type FileRowActions = {
-  onFileDelete?: (filePath: string) => void | Promise<void>;
-  onFileRename?: (filePath: string, newName: string) => void | Promise<void>;
-  onFileDownload?: (filePath: string) => void | Promise<void>;
-  onFolderJam?: (jamDetails: JamCreate) => void | Promise<void>;
+  onFileDelete?: (filePath: string) => any;
+  onFileRename?: (filePath: string, newName: string) => any;
+  onFileDownload?: (filePath: string) => any;
 };
 
 type Props = {
@@ -39,29 +36,20 @@ export function TableRow(props: Props) {
 
   const handleClickRenameFile = () => setIsRenameModalOpen(true);
   const handleCloseRenameModal = () => setIsRenameModalOpen(false);
-
-  const handleClickJamFolder = () => setIsFolderJamModalOpen(true);
-  const handleCloseJamModal = () => setIsFolderJamModalOpen(false);
-
-  const handleDeleteFile = () =>
-    props.actions?.onFileDelete?.(props.file.relative_path);
-  const handleFileDownload = () =>
-    props.actions?.onFileDownload?.(props.file.relative_path);
   const handleRenameFile = async (newPath: string) => {
     await props.actions?.onFileRename?.(props.file.relative_path, newPath);
 
     setIsRenameModalOpen(false);
   };
-  const handleFolderJam = (data: NewJamFormSchema) => {
-    const jamDetails: JamCreate = {
-      folder_relative_path: props.file.relative_path,
-      expires_at: data.expirationDate.toISOString(),
-      password: data.password,
-    };
 
-    props.actions?.onFolderJam?.(jamDetails);
-    setIsFolderJamModalOpen(false);
-  }
+  const handleClickJamFolder = () => setIsFolderJamModalOpen(true);
+  const handleCloseJamModal = () => setIsFolderJamModalOpen(false);
+
+
+  const handleDeleteFile = () =>
+    props.actions?.onFileDelete?.(props.file.relative_path);
+  const handleFileDownload = () =>
+    props.actions?.onFileDownload?.(props.file.relative_path);
 
   const isFolder = props.file.type === "directory";
 
@@ -71,8 +59,7 @@ export function TableRow(props: Props) {
         <NewJamModal
           open={isFolderJamModalOpen}
           onClose={handleCloseJamModal}
-          fileName={props.name}
-          onSubmit={handleFolderJam}
+          folderRelativePath={props.file.relative_path}
         />
       )}
       {isRenameModalOpen && (
@@ -135,7 +122,7 @@ export function TableRow(props: Props) {
                 onClick={handleClickJamFolder}
               >
                 <div className="w-5 h-5 flex items-center justify-center">
-                  <RenameIcon />
+                  <CloudUploadIcon fontSize="small" />
                 </div>
                 Jam Folder
               </div>}
