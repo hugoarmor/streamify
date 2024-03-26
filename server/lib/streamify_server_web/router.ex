@@ -34,6 +34,10 @@ defmodule StreamifyServerWeb.Router do
 
   scope "/auth", StreamifyServerWeb do
     post("/sign_in", AuthController, :authenticate)
+    post("/jams/sign_in", AuthController, :authenticate_guest)
+
+    pipe_through(:auth)
+    get("/me", AuthController, :me)
   end
 
   # Other scopes may use custom stacks.

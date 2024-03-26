@@ -8,6 +8,9 @@ defmodule StreamifyServerWeb.Guardian do
   def resource_from_claims(%{"sub" => sub}) do
     id = String.split(sub, ":", parts: 2) |> List.last
 
-    {:ok, StreamifyServer.Repo.get(StreamifyServer.User, id)}
+    case id do
+      "guest" -> {:ok, %{id: "guest"}}
+      _ -> {:ok, StreamifyServer.Repo.get(StreamifyServer.User, id)}
+    end
   end
 end

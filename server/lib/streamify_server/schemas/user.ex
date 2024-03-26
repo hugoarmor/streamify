@@ -46,8 +46,6 @@ defmodule StreamifyServer.User do
   def authenticate_user(email, password) do
     user = StreamifyServer.Repo.get_by(StreamifyServer.User, email: email)
 
-    IO.inspect(Argon2.verify_pass(password, user.password_hash))
-
     case user do
       nil -> {:error, "User not found"}
       _ ->

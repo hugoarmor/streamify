@@ -15,6 +15,8 @@ import { JamQueries } from "../../queries/jam";
 import { useParams } from "react-router-dom";
 import { FileService } from "../../services/file";
 import { getMinutes } from "date-fns";
+import { useAuth } from "../../hooks/useAuth";
+import { PasscodeScreen } from "./components/passcode-screen";
 
 export type StreamifyFile = {
   size: number;
@@ -30,6 +32,8 @@ export type StreamifyFiles = {
 export function JamsIndexLayout() {
   const { jamId } = useParams();
 
+  const { isAuthenticated, signInJamGuest } = useAuth();
+
   const { mutateAsync: destroyFile } = useMutation(
     "deleteFile",
     FileQueries.destroy
@@ -39,9 +43,13 @@ export function JamsIndexLayout() {
     FileQueries.rename
   );
 
-  const { data: jam, isError } = useQuery("jam", () => JamQueries.show(jamId!), {
-    enabled: !!jamId,
-  });
+  const { data: jam, isError } = useQuery(
+    "jam",
+    () => JamQueries.show(jamId!),
+    {
+      enabled: !!jamId && isAuthenticated,
+    }
+  );
   const { data: files, refetch } = useQuery(
     "files",
     () => FileQueries.getAll(jam?.folder_relative_path),
@@ -82,19 +90,24 @@ export function JamsIndexLayout() {
   const hasFiles = Object.keys(files ?? {}).length > 0;
 
   const handleRowFileDelete = async (file_path: string) => {
-    await destroyFile(file_path)
-    refetch()
+    await destroyFile(file_path);
+    refetch();
   };
   const handleRowFileRename = async (name: string, newName: string) => {
-    await renameFile({ oldPath: name, newPath: `${jam?.folder_relative_path}/${newName}` })
-    refetch()
+    await renameFile({
+      oldPath: name,
+      newPath: `${jam?.folder_relative_path}/${newName}`,
+    });
+    refetch();
   };
   const handleRowFileDownload = (filePath: string) => {
-    FileService.downloadFile(`http://localhost:4000/api/files/${encodeURIComponent(filePath)}`)
+    FileService.downloadFile(
+      `http://localhost:4000/api/files/${encodeURIComponent(filePath)}`
+    );
   };
 
   const expirationTime = useMemo(() => {
-    if(!jam?.expires_at) return null;
+    if (!jam?.expires_at) return null;
 
     const expiration = new Date(jam.expires_at);
     const now = new Date();
@@ -103,29 +116,34 @@ export function JamsIndexLayout() {
     const hoursDifference = expiration.getHours() - now.getHours();
     const daysDifference = expiration.getDate() - now.getDate();
 
-    if(daysDifference > 0) return `${daysDifference} days`;
-    if(hoursDifference > 0) return `${hoursDifference} hours`;
-    if(minutesDifference > 0) return `${minutesDifference} minutes`;
+    if (daysDifference > 0) return `${daysDifference} days`;
+    if (hoursDifference > 0) return `${hoursDifference} hours`;
+    if (minutesDifference > 0) return `${minutesDifference} minutes`;
   }, [jam?.expires_at]);
 
   const isExpired = useMemo(() => {
-    if(!jam?.expires_at) return false;
+    if (!jam?.expires_at) return false;
 
     const expiration = new Date(jam.expires_at);
     const now = new Date();
 
     return now > expiration;
-  }, [])
+  }, []);
 
-  if(isExpired || isError) return (
-    <main className="bg-gradient-purple flex flex-col w-full h-svh px-20 pt-10">
-      <header className="h-16 pb-10 font-light">
-        <h1 className="text-stf-white text-xl">
-          Not found
-        </h1>
-      </header>
-    </main>
-  )
+  if (isExpired || isError)
+    return (
+      <main className="bg-gradient-purple flex flex-col w-full h-svh px-20 pt-10">
+        <header className="h-16 pb-10 font-light">
+          <h1 className="text-stf-white text-xl">Not found</h1>
+        </header>
+      </main>
+    );
+
+  if (!isAuthenticated)
+    return <PasscodeScreen onSubmit={data => signInJamGuest({
+      jamId: jamId!,
+      password: data.passcode
+    })} />
 
   return (
     <main className="bg-gradient-purple flex flex-col w-full h-svh px-20 pt-10">
@@ -134,8 +152,8 @@ export function JamsIndexLayout() {
           This is a <strong className="font-bold">Streamify Jam</strong>
         </h1>
         <h1 className="text-stf-white text-xl">
-          You have <strong className="font-bold">{expirationTime}</strong> to share your
-          files here...
+          You have <strong className="font-bold">{expirationTime}</strong> to
+          share your files here...
         </h1>
       </header>
       <section className="flex h-full w-full flex-col">
@@ -185,7 +203,7 @@ export function JamsIndexLayout() {
                 rowActions={{
                   onFileDelete: handleRowFileDelete,
                   onFileRename: handleRowFileRename,
-                  onFileDownload: handleRowFileDownload
+                  onFileDownload: handleRowFileDownload,
                 }}
               />
             ) : (
