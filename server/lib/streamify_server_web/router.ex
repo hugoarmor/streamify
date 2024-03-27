@@ -44,7 +44,7 @@ defmodule StreamifyServerWeb.Router do
   scope "/api", StreamifyServerWeb do
     pipe_through(:api)
 
-    get("/files/:file_path", FilesController, :show)
+    get("/files/:file_path", FilesController, :download)
     get("/files/zip/:zip_id", FilesController, :download_zip)
     resources("/jams", JamsController, only: [:show])
 
