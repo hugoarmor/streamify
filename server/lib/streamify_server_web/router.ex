@@ -45,6 +45,7 @@ defmodule StreamifyServerWeb.Router do
     pipe_through(:api)
 
     get("/files/:file_path", FilesController, :show)
+    get("/files/zip/:zip_id", FilesController, :download_zip)
 
     pipe_through(:auth)
 
@@ -54,7 +55,6 @@ defmodule StreamifyServerWeb.Router do
     patch("/files/:old_path/rename", FilesController, :rename)
     post("/files/upload", FilesController, :upload)
     post("/files/zip", FilesController, :zip)
-    get("/files/zip/:zip_id", FilesController, :download_zip)
 
     resources("/users", UsersController)
     resources("/jams", JamsController)
