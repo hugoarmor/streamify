@@ -39,7 +39,7 @@ defmodule StreamifyServerWeb.Endpoint do
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 
   plug Plug.Parsers,
-    parsers: [:urlencoded, {:multipart, length: 100_000_000_000_000, read_length: 100_000_000_000_000, read_timeout: 100_000_000_000_000}, :json],
+    parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
     json_decoder: Phoenix.json_library()
 
