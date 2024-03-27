@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "./layouts/root";
 import { FilesLayout } from "./layouts/root/files";
 import { JamsIndexLayout } from "./layouts/jams";
+import { SignInLayout } from "./layouts/sign-in";
 
 export const router = createBrowserRouter([
   {
@@ -16,5 +17,9 @@ export const router = createBrowserRouter([
   {
     path: "/jams/:jamId",
     element: <JamsIndexLayout />,
+  },
+  {
+    path: "/sign-in/",
+    element: <SignInLayout />,
   }
 ]);

@@ -19,6 +19,19 @@ export class AuthQueries {
     return result.data;
   }
 
+  static signIn = async ({ username, password }: { username: string; password: string }) => {
+    const http = new Http();
+
+    const result = await http.post<{message: string, token: string}>("auth/sign_in", {
+      username,
+      password,
+    });
+
+    if (result.error) throw new Error(result.error.message);
+
+    return result.data;
+  }
+
   static signInJamGuest = async ({ jamId, password }: {jamId: string; password: string}) => {
     const http = new Http();
 
