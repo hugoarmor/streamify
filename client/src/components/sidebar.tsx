@@ -32,8 +32,8 @@ export function Sidebar() {
   return (
     <section className="w-56 gap-2 h-full shrink-0 flex flex-col pt-10 pb-5 px-6 border-r bg-stf-purple-800 border-stf-purple-600 text-xs">
       <SidebarButton path="/" icon={<HomeIcon />} text="Files" />
-      <SidebarButton path="/cluster" icon={<ClusterIcon />} text="Cluster" />
-      <SidebarButton className="mt-auto" path="/settings" icon={<SettingsIcon />} text="Settings" />
+      <SidebarButton className="opacity-50 pointer-events-none" path="/cluster" icon={<ClusterIcon />} text="Cluster" />
+      <SidebarButton className="mt-auto opacity-50 pointer-events-none" path="/settings" icon={<SettingsIcon />} text="Settings" />
     </section>
   );
 }

@@ -15,6 +15,7 @@ type Params = {
 export function useFileUploader(props: Params = {}) {
   const [filesUploads, setFilesUploads] = useState<FileUploadType[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const appendFiles = (newFiles: File[]) => {
     const newFilesUpload = newFiles.map((file) => ({
@@ -40,7 +41,7 @@ export function useFileUploader(props: Params = {}) {
 
     const http = new Http();
 
-    await http.post("/api/files/upload", formData, {
+    const result = await http.post("/api/files/upload", formData, {
       onUploadProgress: (progressEvent) => {
         const total = progressEvent.total ?? fileUpload.file.size;
 
@@ -53,6 +54,10 @@ export function useFileUploader(props: Params = {}) {
       }
     })
 
+    if (result.error != null) {
+      setIsError(true);
+    }
+
     setFilesUploads((prevFiles) => prevFiles.slice(1));
     setIsUploading(false);
     props.onFileUpload?.(fileUpload.file);
@@ -64,5 +69,5 @@ export function useFileUploader(props: Params = {}) {
     uploadNextFile();
   }, [filesUploads, isUploading]);
 
-  return { filesUploads, appendFiles };
+  return { filesUploads, appendFiles, isError };
 }

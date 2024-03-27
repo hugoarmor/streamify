@@ -2,8 +2,19 @@ import { StreamifyLogo } from "../../assets/streamify-logo.svg";
 import { UserIcon } from "../../assets/user-icon.svg";
 import { Sidebar } from "../../components/sidebar";
 import { Outlet } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { NotFound } from "../../components/404";
 
 function RootLayout() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if(isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (!isAuthenticated) {
+    return <NotFound />
+  }
 
   return (
     <main className="bg-gradient-purple flex flex-col w-full h-svh">

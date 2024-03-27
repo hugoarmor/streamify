@@ -1,10 +1,5 @@
-import { PlusIcon } from "../../../assets/plus-icon.svg";
-import { SearchIcon } from "../../../assets/search-icon.svg";
 import { FileQueries } from "../../../queries/files";
 import { useMutation, useQuery } from "react-query";
-import { Popover } from "../../../components/popover";
-import { FolderIcon } from "../../../assets/folder-icon.svg";
-import { FileIcon } from "../../../assets/file-icon.svg";
 import { useMemo, useState } from "react";
 import { FilesUploadProgress } from "../../../components/files-upload-progress";
 import { useFileUploader } from "../../../hooks/useFileUpload";
@@ -28,6 +23,7 @@ export function FilesLayout() {
   const {
     data: files,
     isSuccess,
+    isError,
     refetch,
   } = useQuery("files", () => FileQueries.getAll());
   const [isAddFileModalOpen, setIsAddFileModalOpen] = useState(false);
@@ -87,6 +83,7 @@ export function FilesLayout() {
                 }}
               />
             )}
+            {isError && <div>There was an error fetching the files</div>}
           </div>
         </section>
       </section>
