@@ -2,19 +2,13 @@ import { useMutation, useQuery } from "react-query";
 import { useMemo, useState } from "react";
 import { useFileUploader } from "../../hooks/useFileUpload";
 import { FileQueries } from "../../queries/files";
-import { PlusIcon } from "../../assets/plus-icon.svg";
-import { FileIcon } from "../../assets/file-icon.svg";
-import { FolderIcon } from "../../assets/folder-icon.svg";
-import { Popover } from "../../components/popover";
 import { FilesTable } from "../../components/files-table/table";
 import { FilesUploadProgress } from "../../components/files-upload-progress";
 import { AddFileModal } from "../../components/add-file-modal";
-import { SearchIcon } from "../../assets/search-icon.svg";
 import { StreamifyLogo } from "../../assets/streamify-logo.svg";
 import { JamQueries } from "../../queries/jam";
 import { useParams } from "react-router-dom";
 import { FileService } from "../../services/file";
-import { getMinutes } from "date-fns";
 import { useAuth } from "../../hooks/useAuth";
 import { PasscodeScreen } from "./components/passcode-screen";
 import { ActionsHeader } from "../../components/files-table/actions-header";
@@ -45,14 +39,14 @@ export function JamsIndexLayout() {
     FileQueries.rename
   );
 
-  const canGetJam = !!jamId && isAuthenticated;
-  const { data: jam, isError } = useQuery(
-    "jam",
-    () => JamQueries.show(jamId!),
-    {
-      enabled: canGetJam,
-    }
-  );
+  const canGetJam = !!jamId;
+  const {
+    data: jam,
+    isError,
+    isLoading: isLoadingJam,
+  } = useQuery("jam", () => JamQueries.show(jamId!), {
+    enabled: canGetJam,
+  });
 
   const canGetFiles = !!jam?.folder_relative_path;
   const { data: files, refetch } = useQuery(
@@ -119,6 +113,15 @@ export function JamsIndexLayout() {
 
     return now > expiration;
   }, []);
+
+  if (isLoadingJam)
+    return (
+      <main className="bg-gradient-purple flex flex-col w-full h-svh px-20 pt-10">
+        <header className="h-16 pb-10 font-light">
+          <h1 className="text-stf-white text-xl">Loading...</h1>
+        </header>
+      </main>
+    );
 
   if (isExpired || isError)
     return (
