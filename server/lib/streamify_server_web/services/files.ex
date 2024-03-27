@@ -81,4 +81,12 @@ defmodule FilesService do
         {:error, reason}
     end
   end
+
+  def path_exists?(path) do
+    File.exists?(path)
+  end
+
+  def join_managed_folder(file_path) do
+    Path.join(get_managed_folder(), file_path)
+  end
 end
