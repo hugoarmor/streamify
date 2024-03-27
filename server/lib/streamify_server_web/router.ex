@@ -42,10 +42,13 @@ defmodule StreamifyServerWeb.Router do
 
   # Other scopes may use custom stacks.
   scope "/api", StreamifyServerWeb do
-    pipe_through([:api, :auth])
+    pipe_through(:api)
+
+    get("/files/:file_path", FilesController, :show)
+
+    pipe_through(:auth)
 
     get("/files", FilesController, :index)
-    get("/files/:file_path", FilesController, :show)
     delete("/files/:file_path", FilesController, :destroy)
     delete("/files", FilesController, :destroy_many)
     patch("/files/:old_path/rename", FilesController, :rename)
