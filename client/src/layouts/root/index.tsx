@@ -1,19 +1,20 @@
 import { StreamifyLogo } from "../../assets/streamify-logo.svg";
 import { UserIcon } from "../../assets/user-icon.svg";
 import { Sidebar } from "../../components/sidebar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { NotFound } from "../../components/404";
 
 function RootLayout() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isAdmin, isLoading } = useAuth();
+  const navigate = useNavigate()
 
   if(isLoading) {
     return <div>Loading...</div>
   }
 
-  if (!isAuthenticated) {
-    return <NotFound />
+  if (!isAuthenticated || !isAdmin) {
+    navigate("/sign-in")
+    return null
   }
 
   return (
