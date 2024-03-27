@@ -48,7 +48,7 @@ export function JamsIndexLayout() {
     enabled: canGetJam,
   });
 
-  const canGetFiles = !!jam?.folder_relative_path;
+  const canGetFiles = !!jam?.folder_relative_path && isAuthenticated;
   const { data: files, refetch } = useQuery(
     "files",
     () => FileQueries.getAll(jam?.folder_relative_path),

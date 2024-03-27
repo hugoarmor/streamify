@@ -4,53 +4,56 @@ defmodule StreamifyServerWeb.AuthController do
   def authenticate(conn, %{"username" => username, "password" => password}) do
     case StreamifyServer.User.authenticate_user(username, password) do
       {:ok, user} ->
-        case StreamifyServerWeb.Guardian.encode_and_sign(user, %{}, token_type: :access) do
-          {:ok, jwt, _full_claims} ->
-            conn
-            |> put_status(:ok)
-            |> put_resp_header("authorization", "Bearer #{jwt}")
-            |> json(%{
-              token: jwt,
-              message: "Successfully authenticated"
-            })
+        handle_successful_authentication(conn, user)
 
-          {:error, reason} ->
-            conn
-            |> put_status(:unauthorized)
-            |> json(%{message: reason})
-        end
-
-      {:error, reason} ->
-        conn
-        |> put_status(:unauthorized)
-        |> json(%{message: reason})
+      {:error, _reason} ->
+        handle_authentication_error(conn)
     end
   end
 
+  defp handle_successful_authentication(conn, user) do
+    case StreamifyServerWeb.Guardian.encode_and_sign(user, %{}, token_type: :access) do
+      {:ok, jwt, _full_claims} ->
+        conn
+        |> put_status(:ok)
+        |> put_resp_header("authorization", jwt)
+        |> json(%{token: jwt, message: "Successfully authenticated"})
+
+      {:error, _reason} ->
+        handle_authentication_error(conn)
+    end
+  end
+
+  defp handle_authentication_error(conn) do
+    conn
+    |> put_status(:unauthorized)
+    |> json(%{message: "Unauthorized"})
+  end
+
   def authenticate_guest(conn, %{"password" => password, "jam_id" => jam_id}) do
-    jam = StreamifyServer.Repo.get!(Jam, jam_id)
+    with jam <- StreamifyServer.Repo.get(Jam, jam_id),
+         true <- Argon2.verify_pass(password, jam.password) do
+      handle_successful_guest_authentication(conn)
+    else
+      _ ->
+        IO.puts "FAILED HERE"
+        handle_authentication_error(conn)
+    end
+  end
 
-    Argon2.verify_pass(password, jam.password) || raise(RuntimeError, "Unauthorized")
-
+  defp handle_successful_guest_authentication(conn) do
     guest = %{id: "guest"}
 
     case StreamifyServerWeb.Guardian.encode_and_sign(guest, %{}, token_type: :access) do
       {:ok, jwt, _full_claims} ->
         conn
         |> put_status(:ok)
-        |> put_resp_header("authorization", "Bearer #{jwt}")
-        |> json(%{
-          token: jwt,
-          message: "Successfully authenticated"
-        })
+        |> put_resp_header("authorization", jwt)
+        |> json(%{token: jwt, message: "Successfully authenticated"})
 
-      {:error, reason} ->
-        conn
-        |> put_status(:unauthorized)
-        |> json(%{message: reason})
+      {:error, _reason} ->
+        handle_authentication_error(conn)
     end
-  rescue
-    _ -> conn |> put_status(:unauthorized) |> json(%{message: "Unauthorized"})
   end
 
   def me(conn, _params) do

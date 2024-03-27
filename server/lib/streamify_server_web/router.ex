@@ -46,6 +46,7 @@ defmodule StreamifyServerWeb.Router do
 
     get("/files/:file_path", FilesController, :show)
     get("/files/zip/:zip_id", FilesController, :download_zip)
+    resources("/jams", JamsController, only: [:show])
 
     pipe_through(:auth)
 
@@ -57,7 +58,7 @@ defmodule StreamifyServerWeb.Router do
     post("/files/zip", FilesController, :zip)
 
     resources("/users", UsersController)
-    resources("/jams", JamsController)
+    resources("/jams", JamsController, only: [:index, :create, :update])
   end
 
   # Enables LiveDashboard only for development
