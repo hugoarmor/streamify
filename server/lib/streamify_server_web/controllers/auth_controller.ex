@@ -36,7 +36,6 @@ defmodule StreamifyServerWeb.AuthController do
       handle_successful_guest_authentication(conn)
     else
       _ ->
-        IO.puts "FAILED HERE"
         handle_authentication_error(conn)
     end
   end
