@@ -44,4 +44,8 @@ defmodule Jam do
   def to_map_many(jams) do
     Enum.map(jams, &to_map/1)
   end
+
+  def expired?(jam) do
+    jam.expires_at < DateTime.utc_now()
+  end
 end
