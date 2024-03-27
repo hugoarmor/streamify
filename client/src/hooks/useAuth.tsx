@@ -11,7 +11,7 @@ export function useAuth() {
     isError,
     refetch,
   } = useQuery("user", AuthQueries.me);
-  const { data: signInJamGuestData, mutate: signInJamGuest } = useMutation(
+  const { data: signInJamGuestData, mutate: signInJamGuest, isError: isSignInJamGuestError } = useMutation(
     "signInJamGuest",
     AuthQueries.signInJamGuest
   );
@@ -27,5 +27,5 @@ export function useAuth() {
     refetch();
   }, [signInJamGuestData]);
 
-  return { user, isLoading, isError, isAuthenticated, signInJamGuest };
+  return { user, isLoading, isError, isAuthenticated, signInJamGuest, isSignInJamGuestError };
 }

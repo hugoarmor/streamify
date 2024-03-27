@@ -34,7 +34,7 @@ export type StreamifyFiles = {
 export function JamsIndexLayout() {
   const { jamId } = useParams();
 
-  const { isAuthenticated, signInJamGuest } = useAuth();
+  const { isAuthenticated, signInJamGuest, isSignInJamGuestError } = useAuth();
 
   const { mutateAsync: destroyFile } = useMutation(
     "deleteFile",
@@ -132,6 +132,7 @@ export function JamsIndexLayout() {
   if (!isAuthenticated) {
     return (
       <PasscodeScreen
+        errorMessage={isSignInJamGuestError ? "Invalid passcode" : undefined}
         onSubmit={(data) =>
           signInJamGuest({
             jamId: jamId!,
