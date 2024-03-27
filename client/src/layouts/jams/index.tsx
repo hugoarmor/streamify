@@ -161,6 +161,7 @@ export function JamsIndexLayout() {
             {hasFiles ? (
               <FilesTable
                 files={files!}
+                folderRelativePath={jam?.folder_relative_path}
                 rowActions={{
                   onFileDelete: handleRowFileDelete,
                   onFileRename: handleRowFileRename,

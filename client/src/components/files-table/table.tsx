@@ -12,9 +12,10 @@ import { DeleteIcon } from "../../assets/delete-icon.svg";
 type Props = {
   files: StreamifyFiles;
   rowActions?: FileRowActions;
+  folderRelativePath?: string;
 };
 
-export function FilesTable({ files, rowActions }: Props) {
+export function FilesTable({ files, rowActions, folderRelativePath }: Props) {
   const [selectedFiles, setSelectedFiles] = useState<Set<String>>(
     new Set<string>()
   );
@@ -80,7 +81,9 @@ export function FilesTable({ files, rowActions }: Props) {
             >
               <CloseIcon />
             </div>
-            <p className="text-xs ml-3 mr-7 pointer-events-none">{selectedFiles.size} Selected</p>
+            <p className="text-xs ml-3 mr-7 pointer-events-none">
+              {selectedFiles.size} Selected
+            </p>
             <div className="flex gap-2">
               <DownloadIcon
                 onClick={handleDownloadClick}
@@ -121,16 +124,20 @@ export function FilesTable({ files, rowActions }: Props) {
           </tr>
         </thead>
         <tbody>
-          {Object.entries(files).map(([name, file]) => (
-            <TableRow
-              isFocused={selectedFiles.has(name)}
-              key={name}
-              name={name}
-              file={file}
-              onFocus={() => handleRowFocus(name)}
-              actions={rowActions}
-            />
-          ))}
+          {Object.entries(files).map(([name, file]) => {
+            const filePath = folderRelativePath ? `${folderRelativePath}/${name}` : name;
+
+            return (
+              <TableRow
+                isFocused={selectedFiles.has(filePath)}
+                key={filePath}
+                name={name}
+                file={file}
+                onFocus={() => handleRowFocus(filePath)}
+                actions={rowActions}
+              />
+            );
+          })}
         </tbody>
       </table>
     </>
