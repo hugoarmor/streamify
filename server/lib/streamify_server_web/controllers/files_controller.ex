@@ -79,8 +79,6 @@ defmodule StreamifyServerWeb.FilesController do
   def upload(conn, %{"file_name" => file_name, "file" => file}) do
     file_path = "#{FilesService.get_managed_folder()}/#{file_name}"
 
-    IO.puts "file_path: #{file_path}"
-
     case FilesService.copy_file(file.path, file_path) do
       :ok ->
         conn |> send_resp(200, "Chunk uploaded successfully")
