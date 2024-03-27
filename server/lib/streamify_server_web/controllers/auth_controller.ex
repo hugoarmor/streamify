@@ -1,8 +1,8 @@
 defmodule StreamifyServerWeb.AuthController do
   use StreamifyServerWeb, :controller
 
-  def authenticate(conn, %{"email" => email, "password" => password}) do
-    case StreamifyServer.User.authenticate_user(email, password) do
+  def authenticate(conn, %{"username" => username, "password" => password}) do
+    case StreamifyServer.User.authenticate_user(username, password) do
       {:ok, user} ->
         case StreamifyServerWeb.Guardian.encode_and_sign(user, %{}, token_type: :access) do
           {:ok, jwt, _full_claims} ->
@@ -10,7 +10,7 @@ defmodule StreamifyServerWeb.AuthController do
             |> put_status(:ok)
             |> put_resp_header("authorization", "Bearer #{jwt}")
             |> json(%{
-              token: "Bearer #{jwt}",
+              token: jwt,
               message: "Successfully authenticated"
             })
 

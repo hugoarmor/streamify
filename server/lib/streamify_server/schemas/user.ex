@@ -43,8 +43,8 @@ defmodule StreamifyServer.User do
     Enum.map(users, &to_map/1)
   end
 
-  def authenticate_user(email, password) do
-    user = StreamifyServer.Repo.get_by(StreamifyServer.User, email: email)
+  def authenticate_user(username, password) do
+    user = StreamifyServer.Repo.get_by(StreamifyServer.User, username: username)
 
     case user do
       nil -> {:error, "User not found"}
