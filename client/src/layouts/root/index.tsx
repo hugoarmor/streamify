@@ -5,14 +5,14 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 function RootLayout() {
-  const { isAuthenticated, isAdmin, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate()
 
   if(isLoading) {
     return <div>Loading...</div>
   }
 
-  if (!isAuthenticated || !isAdmin) {
+  if (!isAuthenticated) {
     navigate("/sign-in")
     return null
   }

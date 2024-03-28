@@ -28,7 +28,6 @@ export function useAuth({ fetchUser = true }: Props = {}) {
     isError: isSignInError,
     isLoading: isLoadingSignIn
   } = useMutation("signIn", AuthQueries.signIn);
-  const isAdmin = user?.id !== "guest";
 
   useEffect(() => {
     const bearerToken = signInJamGuestData?.token ?? signInData?.token
@@ -58,6 +57,5 @@ export function useAuth({ fetchUser = true }: Props = {}) {
     signIn,
     isSignInError,
     isLoadingSignIn,
-    isAdmin
   };
 }

@@ -12,7 +12,9 @@ defmodule StreamifyServerWeb.AuthController do
   end
 
   defp handle_successful_authentication(conn, user) do
-    case StreamifyServerWeb.Guardian.encode_and_sign(user, %{}, token_type: :access) do
+    resource = "user:#{user.id}"
+
+    case StreamifyServerWeb.Guardian.encode_and_sign(resource, %{}, token_type: :access) do
       {:ok, jwt, _full_claims} ->
         conn
         |> put_status(:ok)
@@ -33,17 +35,17 @@ defmodule StreamifyServerWeb.AuthController do
   def authenticate_guest(conn, %{"password" => password, "jam_id" => jam_id}) do
     with jam <- StreamifyServer.Repo.get(Jam, jam_id),
          true <- Argon2.verify_pass(password, jam.password) do
-      handle_successful_guest_authentication(conn)
+      handle_successful_guest_authentication(conn, jam_id)
     else
       _ ->
         handle_authentication_error(conn)
     end
   end
 
-  defp handle_successful_guest_authentication(conn) do
-    guest = %{id: "guest"}
+  defp handle_successful_guest_authentication(conn, jam_id) do
+    resource = "jam:#{jam_id}"
 
-    case StreamifyServerWeb.Guardian.encode_and_sign(guest, %{}, token_type: :access) do
+    case StreamifyServerWeb.Guardian.encode_and_sign(resource, %{}, token_type: :access) do
       {:ok, jwt, _full_claims} ->
         conn
         |> put_status(:ok)
@@ -58,14 +60,17 @@ defmodule StreamifyServerWeb.AuthController do
   def me(conn, _params) do
     current_resource = Guardian.Plug.current_resource(conn)
 
-    user =
-      case current_resource do
-        %{id: "guest"} -> %StreamifyServer.User{id: "guest"}
-        user -> user
-      end
+    case current_resource.role do
+      "user" -> conn |> put_status(:ok) |> json(StreamifyServer.User.to_map(current_resource))
+      _ -> conn |> put_status(:unauthorized) |> json(%{message: "Unauthorized"})
+    end
+  end
 
-    conn
-    |> put_status(:ok)
-    |> json(StreamifyServer.User.to_map(user))
+  def authorize_jam_guest(conn, %{"jam_id" => jam_id}) do
+    if Auth.Service.jam_guest_authorized?(conn, jam_id) do
+      conn |> put_status(:ok) |> json(%{message: "Authorized"})
+    else
+      conn |> put_status(:unauthorized) |> json(%{message: "Unauthorized"})
+    end
   end
 end

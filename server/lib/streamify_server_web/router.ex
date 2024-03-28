@@ -38,6 +38,7 @@ defmodule StreamifyServerWeb.Router do
 
     pipe_through(:auth)
     get("/me", AuthController, :me)
+    get("/jams/:jam_id", AuthController, :authorize_jam_guest)
   end
 
   # Other scopes may use custom stacks.
