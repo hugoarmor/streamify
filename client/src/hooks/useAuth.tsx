@@ -11,14 +11,14 @@ export function useAuth({ fetchUser = true }: Props = {}) {
   const {
     data: user,
     isLoading,
-    isSuccess: isAuthenticated,
+    isSuccess: isUserAuthenticated,
     isError,
     refetch,
   } = useQuery("user", AuthQueries.me, {
     enabled: fetchUser,
   });
   const {
-    data: signInJamGuestData,
+    isSuccess: isJamGuestAuthenticated,
     mutate: signInJamGuest,
     isError: isSignInJamGuestError,
   } = useMutation("signInJamGuest", AuthQueries.signInJamGuest);
@@ -30,7 +30,7 @@ export function useAuth({ fetchUser = true }: Props = {}) {
   } = useMutation("signIn", AuthQueries.signIn);
 
   useEffect(() => {
-    const bearerToken = signInJamGuestData?.token ?? signInData?.token
+    const bearerToken = signInData?.token
 
     if (!bearerToken) return;
 
@@ -45,13 +45,13 @@ export function useAuth({ fetchUser = true }: Props = {}) {
     );
 
     refetch();
-  }, [signInJamGuestData, signInData]);
+  }, [signInData]);
 
   return {
     user,
     isLoading,
     isError,
-    isAuthenticated,
+    isAuthenticated: isUserAuthenticated || isJamGuestAuthenticated,
     signInJamGuest,
     isSignInJamGuestError,
     signIn,

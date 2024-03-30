@@ -19,6 +19,17 @@ export class AuthQueries {
     return result.data;
   }
 
+
+  static async authJamGuest(jamId: string) {
+    const http = new Http();
+
+    const result = await http.get<User>(`auth/jams/${jamId}`);
+
+    if (result.error) throw result.error;
+
+    return result.data;
+  }
+
   static signIn = async ({ username, password }: { username: string; password: string }) => {
     const http = new Http();
 

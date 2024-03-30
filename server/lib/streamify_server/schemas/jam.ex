@@ -46,6 +46,11 @@ defmodule Jam do
   end
 
   def expired?(jam) do
+    IO.inspect jam.expires_at
+    IO.inspect DateTime.utc_now()
+
+    IO.inspect jam.expires_at < DateTime.utc_now()
+
     jam.expires_at < DateTime.utc_now()
   end
 end

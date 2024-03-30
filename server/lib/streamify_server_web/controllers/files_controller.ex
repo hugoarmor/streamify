@@ -3,6 +3,8 @@ defmodule StreamifyServerWeb.FilesController do
 
   def index(conn, params) do
     folder_relative_path = params["folder_relative_path"]
+    Auth.Service.enable_folder_access!(conn, folder_relative_path || ".")
+
     folder_path = FilesService.join_managed_folder(folder_relative_path || "")
 
     result =
@@ -12,7 +14,7 @@ defmodule StreamifyServerWeb.FilesController do
     json(conn, result)
   rescue
     error ->
-      conn |> send_resp(400, "Folder not found: #{inspect(error)}")
+      conn |> send_resp(400, "Error getting folder: #{inspect(error)}")
   end
 
   def download(conn, %{"file_path" => file_path}) do
@@ -39,6 +41,8 @@ defmodule StreamifyServerWeb.FilesController do
   end
 
   def destroy(conn, %{"file_path" => file_path}) do
+    Auth.Service.enable_folder_access!(conn, file_path |> Path.dirname())
+
     file_path
     |> FilesService.join_managed_folder()
     |> FilesService.delete_file()
@@ -54,6 +58,9 @@ defmodule StreamifyServerWeb.FilesController do
   def destroy_many(conn, %{"file_paths" => file_paths}) do
     file_paths
     |> Enum.each(fn file_path ->
+      folder_relative_path = file_path |> Path.dirname()
+      Auth.Service.enable_folder_access!(conn, folder_relative_path)
+
       file_path = FilesService.join_managed_folder(file_path)
 
       FilesService.delete_file(file_path)
@@ -63,6 +70,9 @@ defmodule StreamifyServerWeb.FilesController do
   end
 
   def rename(conn, %{"old_path" => old_path, "new_file_path" => new_file_path}) do
+    Auth.Service.enable_folder_access!(conn, old_path |> Path.dirname())
+    Auth.Service.enable_folder_access!(conn, new_file_path |> Path.dirname())
+
     old_path = FilesService.join_managed_folder(old_path)
     new_file_path = FilesService.join_managed_folder(new_file_path)
 
@@ -77,6 +87,8 @@ defmodule StreamifyServerWeb.FilesController do
   end
 
   def upload(conn, %{"file_name" => file_name, "file" => file}) do
+    Auth.Service.enable_folder_access!(conn, file_name |> Path.dirname())
+
     file_path = FilesService.join_managed_folder(file_name)
 
     case FilesService.copy_file(file.path, file_path) do
