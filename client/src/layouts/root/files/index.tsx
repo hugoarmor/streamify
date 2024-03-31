@@ -7,6 +7,7 @@ import { FilesTable } from "../../../components/files-table/table";
 import { AddFileModal } from "../../../components/add-file-modal";
 import { FileService } from "../../../services/file";
 import { ActionsHeader } from "../../../components/files-table/actions-header";
+import { useQueryParams } from "../../../hooks/useQueryParams";
 
 export type StreamifyFile = {
   size: number;
@@ -20,14 +21,17 @@ export type StreamifyFiles = {
 };
 
 export function FilesLayout() {
+  const params = useQueryParams();
+
   const {
     data: files,
     isSuccess,
     isError,
     refetch,
-  } = useQuery("files", () => FileQueries.getAll());
+  } = useQuery("files", () => FileQueries.getAll(params.folder_relative_path));
   const [isAddFileModalOpen, setIsAddFileModalOpen] = useState(false);
   const { appendFiles, filesUploads: filesBeingUploaded } = useFileUploader({
+    folder_relative_path: params.folder_relative_path,
     onFileUpload: () => refetch(),
   });
   const { mutateAsync: destroyFile } = useMutation(
@@ -58,7 +62,10 @@ export function FilesLayout() {
     refetch();
   };
   const handleRowFileRename = async (name: string, newName: string) => {
-    await renameFile({ oldPath: name, newPath: newName });
+    await renameFile({
+      oldPath: name,
+      newPath: params.folder_relative_path ? `${params.folder_relative_path}/${newName}` : newName,
+    });
     refetch();
   };
   const handleRowFileDownload = (filePath: string) => {
@@ -76,6 +83,7 @@ export function FilesLayout() {
             {isSuccess && (
               <FilesTable
                 files={files}
+                folderRelativePath={params.folder_relative_path}
                 rowActions={{
                   onFileDelete: handleRowFileDelete,
                   onFileRename: handleRowFileRename,
