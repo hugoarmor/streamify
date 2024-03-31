@@ -21,7 +21,7 @@ type Props = {
 
 const formSchema = z.object({
   expirationDate: z.date(),
-  canEdit: z.boolean(),
+  canEdit: z.boolean().default(true),
   password: z.string().min(6),
 });
 
@@ -40,6 +40,9 @@ export function NewJamModal(props: Props) {
 
   const { register, handleSubmit, setValue } = useForm<NewJamFormSchema>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      canEdit: true
+    }
   });
 
   const handleSubmitEvent = async (data: NewJamFormSchema) => {
@@ -154,11 +157,11 @@ export function NewJamModal(props: Props) {
           {...register("password")}
           color="primary"
         />
-        <div className="flex">
+        <div className="flex cursor-not-allowed">
           <label className="flex text-sm items-center gap-2">
             Can users edit this folder?
           </label>
-          <Switch {...register("canEdit")} color="primary" />
+          <Switch disabled {...register("canEdit")} defaultChecked color="primary" />
         </div>
       </div>
       <div className="flex px-8 py-4 justify-end gap-4 mt-4 border-t border-stf-purple-600 text-sm">
