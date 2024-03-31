@@ -8,6 +8,9 @@ import { AddFileModal } from "../../../components/add-file-modal";
 import { FileService } from "../../../services/file";
 import { ActionsHeader } from "../../../components/files-table/actions-header";
 import { useQueryParams } from "../../../hooks/useQueryParams";
+import { FolderIcon } from "../../../assets/folder-icon.svg";
+import { Link } from "react-router-dom";
+import { FoldersBar } from "./components/folders-bar";
 
 export type StreamifyFile = {
   size: number;
@@ -64,7 +67,9 @@ export function FilesLayout() {
   const handleRowFileRename = async (name: string, newName: string) => {
     await renameFile({
       oldPath: name,
-      newPath: params.folder_relative_path ? `${params.folder_relative_path}/${newName}` : newName,
+      newPath: params.folder_relative_path
+        ? `${params.folder_relative_path}/${newName}`
+        : newName,
     });
     refetch();
   };
@@ -74,24 +79,32 @@ export function FilesLayout() {
     );
   };
 
+  const filesCount = Object.keys(files ?? {}).length;
+
+  const handleEachLink = (path: string) => `/?folder_relative_path=${path}`
+
   return (
     <>
       <section className="flex h-full w-full items-center justify-center px-20">
         <section className="flex h-full w-full flex-col py-10">
           <ActionsHeader onNewFileClick={handleNewFileClick} />
-          <div className="bg-stf-purple-800 border-stf-purple-600 h-full justify-center rounded-xl border px-14 pt-10">
-            {isSuccess && (
-              <FilesTable
-                files={files}
-                folderRelativePath={params.folder_relative_path}
-                rowActions={{
-                  onFileDelete: handleRowFileDelete,
-                  onFileRename: handleRowFileRename,
-                  onFileDownload: handleRowFileDownload,
-                }}
-              />
-            )}
-            {isError && <div>There was an error fetching the files</div>}
+          <div className="flex flex-col bg-stf-purple-800 border-stf-purple-600 h-full rounded-xl border">
+            <div className="px-14 pt-10">
+              {isSuccess && (
+                <FilesTable
+                  files={files}
+                  folderRelativePath={params.folder_relative_path}
+                  rowActions={{
+                    onFileDelete: handleRowFileDelete,
+                    onFileRename: handleRowFileRename,
+                    onFileDownload: handleRowFileDownload,
+                  }}
+                />
+              )}
+              {isError && <div>There was an error fetching the files</div>}
+              {filesCount === 0 && <div>No files found</div>}
+            </div>
+            <FoldersBar path={params.folder_relative_path} eachLink={handleEachLink} />
           </div>
         </section>
       </section>

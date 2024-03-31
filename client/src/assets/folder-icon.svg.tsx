@@ -1,13 +1,16 @@
 type Props = {
   className?: string;
+  size?: number;
+  onClick?: () => void;
 };
 
-export function FolderIcon({ className }: Props) {
+export function FolderIcon({ className, onClick, size = 23 }: Props) {
   return (
     <svg
+      onClick={onClick}
       className={className}
-      width="23"
-      height="23"
+      width={size}
+      height={size}
       viewBox="0 0 23 23"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

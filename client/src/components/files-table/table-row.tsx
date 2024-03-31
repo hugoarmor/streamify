@@ -1,6 +1,6 @@
 import { format, fromUnixTime } from "date-fns";
 import { RenameFileModal } from "../rename-file-modal";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { StreamifyFile } from "../../layouts/root/files";
 import { FolderIcon } from "../../assets/folder-icon.svg";
 import { FileIcon } from "../../assets/file-icon.svg";
@@ -11,7 +11,9 @@ import { DownloadIcon } from "../../assets/download-icon.svg";
 import { RenameIcon } from "../../assets/rename-icon.svg";
 import { DeleteIcon } from "../../assets/delete-icon.svg";
 import { NewJamModal } from "../new-jam-modal";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { useQueryParams } from "../../hooks/useQueryParams";
+import { Link } from "react-router-dom";
 
 export type FileRowActions = {
   onFileDelete?: (filePath: string) => any;
@@ -28,6 +30,7 @@ type Props = {
 };
 
 export function TableRow(props: Props) {
+  const params = useQueryParams();
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [isFolderJamModalOpen, setIsFolderJamModalOpen] = useState(false);
 
@@ -45,13 +48,19 @@ export function TableRow(props: Props) {
   const handleClickJamFolder = () => setIsFolderJamModalOpen(true);
   const handleCloseJamModal = () => setIsFolderJamModalOpen(false);
 
-
   const handleDeleteFile = () =>
     props.actions?.onFileDelete?.(props.file.relative_path);
   const handleFileDownload = () =>
     props.actions?.onFileDownload?.(props.file.relative_path);
 
   const isFolder = props.file.type === "directory";
+
+  const folderUrl = useMemo(() => {
+    const newPath = params.folder_relative_path
+      ? `${params.folder_relative_path}/${props.name}`
+      : props.name;
+    return `/?folder_relative_path=${newPath}`;
+  }, [params.folder_relative_path, props.name]);
 
   return (
     <>
@@ -80,7 +89,13 @@ export function TableRow(props: Props) {
           className="py-3 flex items-center gap-2 cursor-default"
         >
           <div className="w-10 flex items-center justify-center">
-            {isFolder ? <FolderIcon /> : <FileIcon />}
+            {isFolder ? (
+              <Link to={folderUrl} reloadDocument>
+                <FolderIcon className="cursor-pointer" />
+              </Link>
+            ) : (
+              <FileIcon />
+            )}
           </div>
           {props.name}
         </td>
@@ -117,15 +132,17 @@ export function TableRow(props: Props) {
                 </div>
                 Rename
               </div>
-              {isFolder && <div
-                className="flex items-center gap-2 hover:opacity-60 cursor-pointer"
-                onClick={handleClickJamFolder}
-              >
-                <div className="w-5 h-5 flex items-center justify-center">
-                  <CloudUploadIcon fontSize="small" />
+              {isFolder && (
+                <div
+                  className="flex items-center gap-2 hover:opacity-60 cursor-pointer"
+                  onClick={handleClickJamFolder}
+                >
+                  <div className="w-5 h-5 flex items-center justify-center">
+                    <CloudUploadIcon fontSize="small" />
+                  </div>
+                  Jam Folder
                 </div>
-                Jam Folder
-              </div>}
+              )}
               <div className="text-red-400 border-t border-stf-purple-600"></div>
               <div
                 className="flex items-center gap-2 hover:opacity-60 cursor-pointer text-red-400"
