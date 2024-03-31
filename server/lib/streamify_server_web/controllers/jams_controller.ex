@@ -30,7 +30,6 @@ defmodule StreamifyServerWeb.JamsController do
   defp handle_existing_jam(conn, jam) do
     case Jam.expired?(jam) do
       true ->
-        IO.puts "from HERE"
         conn |> send_resp(404, "Not found")
       false ->
         conn |> json(Jam.to_map(jam))
