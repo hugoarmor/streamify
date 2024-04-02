@@ -13,6 +13,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { PasscodeScreen } from "./components/passcode-screen";
 import { ActionsHeader } from "../../components/files-table/actions-header";
 import { DateService } from "../../services/date";
+import { Config } from "../../config";
 
 export type StreamifyFile = {
   size: number;
@@ -93,7 +94,7 @@ export function JamsIndexLayout() {
   };
   const handleRowFileDownload = (filePath: string) => {
     FileService.downloadFile(
-      `http://localhost:4000/api/files/${encodeURIComponent(filePath)}`
+      `${Config.apiUrl}/api/files/${encodeURIComponent(filePath)}`
     );
   };
 

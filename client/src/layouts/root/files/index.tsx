@@ -8,9 +8,8 @@ import { AddFileModal } from "../../../components/add-file-modal";
 import { FileService } from "../../../services/file";
 import { ActionsHeader } from "../../../components/files-table/actions-header";
 import { useQueryParams } from "../../../hooks/useQueryParams";
-import { FolderIcon } from "../../../assets/folder-icon.svg";
-import { Link } from "react-router-dom";
 import { FoldersBar } from "./components/folders-bar";
+import { Config } from "../../../config";
 
 export type StreamifyFile = {
   size: number;
@@ -75,13 +74,13 @@ export function FilesLayout() {
   };
   const handleRowFileDownload = (filePath: string) => {
     FileService.downloadFile(
-      `http://localhost:4000/api/files/${encodeURIComponent(filePath)}`
+      `${Config.apiUrl}/api/files/${encodeURIComponent(filePath)}`
     );
   };
 
   const filesCount = Object.keys(files ?? {}).length;
 
-  const handleEachLink = (path: string) => `/?folder_relative_path=${path}`
+  const handleEachLink = (path: string) => `/?folder_relative_path=${path}`;
 
   return (
     <>
@@ -104,7 +103,10 @@ export function FilesLayout() {
               {isError && <div>There was an error fetching the files</div>}
               {filesCount === 0 && <div>No files found</div>}
             </div>
-            <FoldersBar path={params.folder_relative_path} eachLink={handleEachLink} />
+            <FoldersBar
+              path={params.folder_relative_path}
+              eachLink={handleEachLink}
+            />
           </div>
         </section>
       </section>

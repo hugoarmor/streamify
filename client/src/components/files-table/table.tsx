@@ -8,6 +8,7 @@ import { FileService } from "../../services/file";
 import { CloseIcon } from "../../assets/close-icon.svg";
 import { DownloadIcon } from "../../assets/download-icon.svg";
 import { DeleteIcon } from "../../assets/delete-icon.svg";
+import { Config } from "../../config";
 
 type Props = {
   files: StreamifyFiles;
@@ -47,7 +48,7 @@ export function FilesTable({ files, rowActions, folderRelativePath }: Props) {
     if (filePaths.length === 0) return;
     if (filePaths.length > 1) return zipFiles(filePaths);
 
-    const url = `http://localhost:4000/api/files/${filePaths[0]}`;
+    const url = `${Config.apiUrl}/api/files/${filePaths[0]}`;
 
     return FileService.downloadFile(url);
   };
@@ -64,7 +65,7 @@ export function FilesTable({ files, rowActions, folderRelativePath }: Props) {
   useEffect(() => {
     if (!zipId) return;
 
-    const url = `http://localhost:4000/api/files/zip/${zipId}`;
+    const url = `${Config.apiUrl}/api/files/zip/${zipId}`;
 
     FileService.downloadFile(url);
     reset();
