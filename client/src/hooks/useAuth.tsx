@@ -18,6 +18,7 @@ export function useAuth({ fetchUser = true }: Props = {}) {
     enabled: fetchUser,
   });
   const {
+    data: jamGuestData,
     isSuccess: isJamGuestAuthenticated,
     mutate: signInJamGuest,
     isError: isSignInJamGuestError,
@@ -30,7 +31,7 @@ export function useAuth({ fetchUser = true }: Props = {}) {
   } = useMutation("signIn", AuthQueries.signIn);
 
   useEffect(() => {
-    const bearerToken = signInData?.token
+    const bearerToken = signInData?.token ?? jamGuestData?.token
 
     if (!bearerToken) return;
 
@@ -45,7 +46,7 @@ export function useAuth({ fetchUser = true }: Props = {}) {
     );
 
     refetch();
-  }, [signInData]);
+  }, [signInData, isJamGuestAuthenticated]);
 
   return {
     user,
