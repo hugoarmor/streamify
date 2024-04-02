@@ -31,3 +31,7 @@ streamify-*.tar
 old.zip
 
 *streamify_server_dev.db*
+
+/priv/static/*
+set_env_prod.sh
+/public/*
