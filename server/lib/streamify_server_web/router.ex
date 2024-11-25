@@ -61,6 +61,7 @@ defmodule StreamifyServerWeb.Router do
     patch("/files/:old_path/rename", FilesController, :rename)
     post("/files/upload", FilesController, :upload)
     post("/files/zip", FilesController, :zip)
+    post("/files/create_folder", FilesController, :create_folder)
 
     resources("/users", UsersController)
     resources("/jams", JamsController, only: [:index, :create, :update])

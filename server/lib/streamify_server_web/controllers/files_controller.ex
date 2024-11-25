@@ -47,7 +47,7 @@ defmodule StreamifyServerWeb.FilesController do
     |> FilesService.join_managed_folder()
     |> FilesService.delete_file()
     |> case do
-      :ok ->
+      {:ok, _} ->
         conn |> send_resp(200, "File #{file_path} deleted successfully")
 
       {:error, reason} ->
@@ -135,6 +135,18 @@ defmodule StreamifyServerWeb.FilesController do
       {:error, message} ->
         FilesService.delete_file(zip_file_path)
         conn |> send_resp(400, message)
+    end
+  end
+
+  def create_folder(conn, %{"folder_path" => folder_path}) do
+    Auth.Service.enable_folder_access!(conn, folder_path)
+
+    case FilesService.create_folder(folder_path) do
+      :ok ->
+        conn |> send_resp(200, "Folder #{folder_path} created successfully")
+
+      {:error, reason} ->
+        conn |> send_resp(400, "Folder #{folder_path} could not be created: #{reason}")
     end
   end
 end

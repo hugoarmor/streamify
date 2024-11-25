@@ -43,7 +43,7 @@ defmodule FilesService do
   end
 
   def delete_file(file_path) do
-    File.rm(file_path)
+    File.rm_rf(file_path)
   end
 
   def rename_file(old_path, new_path) do
@@ -60,6 +60,15 @@ defmodule FilesService do
     end)
   rescue
     error -> {:error, "File #{file_path} could not be uploaded: #{inspect(error)}"}
+  end
+
+  def create_folder(folder_path) do
+    managed_folder = get_managed_folder()
+
+    case File.mkdir_p(Path.join(managed_folder, folder_path)) do
+      :ok -> :ok
+      {:error, reason} -> {:error, "Could not create folder #{folder_path}: #{reason}"}
+    end
   end
 
   def copy_file(old_path, new_path) do

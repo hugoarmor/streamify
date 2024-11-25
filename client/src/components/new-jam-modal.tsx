@@ -97,7 +97,7 @@ export function NewJamModal(props: Props) {
         <div>
           <div className="flex items-center gap-2">
             <CloudUploadIcon fontSize="medium" />
-            <p className="text-lg">"Your jam has been created!"</p>
+            <p className="text-lg">Your jam has been created!</p>
           </div>
         </div>
         <div

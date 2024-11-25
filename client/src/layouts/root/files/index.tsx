@@ -10,6 +10,7 @@ import { ActionsHeader } from "../../../components/files-table/actions-header";
 import { useQueryParams } from "../../../hooks/useQueryParams";
 import { FoldersBar } from "./components/folders-bar";
 import { Config } from "../../../config";
+import { AddFolderModal } from "../../../components/add-folder";
 
 export type StreamifyFile = {
   size: number;
@@ -32,6 +33,7 @@ export function FilesLayout() {
     refetch,
   } = useQuery("files", () => FileQueries.getAll(params.folder_relative_path));
   const [isAddFileModalOpen, setIsAddFileModalOpen] = useState(false);
+  const [isAddFolderModalOpen, setIsAddFolderModalOpen] = useState(false);
   const { appendFiles, filesUploads: filesBeingUploaded } = useFileUploader({
     folder_relative_path: params.folder_relative_path,
     onFileUpload: () => refetch(),
@@ -44,12 +46,24 @@ export function FilesLayout() {
     "renameFile",
     FileQueries.rename
   );
+  const { mutateAsync: createFolder } = useMutation(
+    "createFolder",
+    FileQueries.createFolder
+  );
 
   const handleNewFileClick = () => setIsAddFileModalOpen(true);
   const handleCloseAddFileModal = () => setIsAddFileModalOpen(false);
   const handleUploadFiles = (files: File[]) => {
     appendFiles(files);
     handleCloseAddFileModal();
+  };
+
+  const handleNewFolderClick = () => setIsAddFolderModalOpen(true);
+  const handleCloseAddFolderModal = () => setIsAddFolderModalOpen(false);
+  const handleCreateFolder = async (folderName: string) => {
+    await createFolder(params.folder_relative_path ? `${params.folder_relative_path}/${folderName}` : folderName);
+    refetch();
+    handleCloseAddFolderModal();
   };
 
   const filesUploads = useMemo(() => {
@@ -86,7 +100,7 @@ export function FilesLayout() {
     <>
       <section className="flex h-full w-full items-center justify-center px-20">
         <section className="flex h-full w-full flex-col py-10">
-          <ActionsHeader onNewFileClick={handleNewFileClick} />
+          <ActionsHeader onNewFileClick={handleNewFileClick} onNewFolderClick={handleNewFolderClick} />
           <div className="flex flex-col bg-stf-purple-800 border-stf-purple-600 h-full rounded-xl border">
             <div className="px-14 pt-10">
               {isSuccess && (
@@ -116,6 +130,14 @@ export function FilesLayout() {
           open={isAddFileModalOpen}
           onClose={handleCloseAddFileModal}
           onAddFiles={handleUploadFiles}
+        />
+      )}
+
+      {isAddFolderModalOpen && (
+        <AddFolderModal
+          open={isAddFolderModalOpen}
+          onClose={handleCloseAddFolderModal}
+          onSubmit={handleCreateFolder}
         />
       )}
     </>

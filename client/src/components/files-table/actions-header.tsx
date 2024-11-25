@@ -6,6 +6,7 @@ import { Popover } from "../popover";
 
 type Props = {
   onNewFileClick: () => void;
+  onNewFolderClick?: () => void;
 }
 
 export function ActionsHeader(props: Props) {
@@ -37,14 +38,15 @@ export function ActionsHeader(props: Props) {
             </div>
             New File
           </div>
-          <div
-            className="opacity-30 flex cursor-not-allowed items-center gap-2"
+          {props.onNewFolderClick && <div
+            className="flex cursor-pointer items-center gap-2 hover:opacity-60"
+            onClick={props.onNewFolderClick}
           >
             <div className="flex h-5 w-5 items-center justify-center">
               <FolderIcon />
             </div>
             New Folder
-          </div>
+          </div>}
         </div>
       </Popover>
     </div>

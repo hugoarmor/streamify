@@ -70,4 +70,16 @@ export class FileQueries {
 
     return result.data;
   }
+
+  static async createFolder(folderPath: string) {
+    const http = new Http();
+
+    const result = await http.post<string>("api/files/create_folder", {
+      folder_path: folderPath,
+    });
+
+    if (result.error) throw result.error;
+
+    return result.data;
+  }
 }
